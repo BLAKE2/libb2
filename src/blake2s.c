@@ -390,11 +390,15 @@ int blake2s( uint8_t *out, const void *in, const void *key, size_t outlen, size_
   blake2s_state S[1];
 
   /* Verify parameters */
-  if ( NULL == in ) return -1;
+  if ( NULL == in && inlen > 0 ) return -1;
 
   if ( NULL == out ) return -1;
 
   if ( NULL == key && keylen > 0) return -1;
+
+  if( !outlen || outlen > BLAKE2S_OUTBYTES ) return -1;
+
+  if( keylen > BLAKE2S_KEYBYTES ) return -1;
 
   if( keylen > 0 )
   {

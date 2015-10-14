@@ -420,6 +420,8 @@ int blake2b( uint8_t *out, const void *in, const void *key, size_t outlen, size_
 
   if( !outlen || outlen > BLAKE2B_OUTBYTES ) return -1;
 
+  if( keylen > BLAKE2B_KEYBYTES ) return -1;
+
   if( keylen )
   {
     if( blake2b_init_key( S, outlen, key, keylen ) < 0 ) return -1;
