@@ -59,7 +59,7 @@ if test $enable_fat == "yes"; then
   AX_CHECK_COMPILE_FLAG([-mxop],    [], AC_MSG_ERROR([Compiler does not know -mxop.]))
 else
   AX_EXT
-  CFLAGS="${CFLAGS} -march=native"
+  CFLAGS="${CFLAGS} -march=native ${SIMD_FLAGS}"
 fi
 
 case $host_os in
