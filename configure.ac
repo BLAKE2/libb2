@@ -21,7 +21,7 @@ AC_C_BIGENDIAN(
 	AC_DEFINE(NATIVE_LITTLE_ENDIAN, 1, [machine is little-endian]),
 	AC_MSG_ERROR(unknown endianness),
 	AC_MSG_ERROR(universal endianness not supported)
-) 
+)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE
@@ -33,7 +33,7 @@ AC_TYPE_UINT8_T
 # Checks for library functions.
 AC_CHECK_FUNCS([memset])
 
-dnl AM_PROG_AR 
+dnl AM_PROG_AR
 AC_PROG_LIBTOOL
 dnl LT_INIT
 
