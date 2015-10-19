@@ -1,20 +1,9 @@
-/*
-   BLAKE2 reference source code package - reference C implementations
-
-   Written in 2012 by Samuel Neves <sneves@dei.uc.pt>
-
-   To the extent possible under law, the author(s) have dedicated all copyright
-   and related and neighboring rights to this software to the public domain
-   worldwide. This software is distributed without any warranty.
-
-   You should have received a copy of the CC0 Public Domain Dedication along with
-   this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
-*/
 #ifndef LIBB2_PORTABLE_BLAKE2_H
 #define LIBB2_PORTABLE_BLAKE2_H
 
 #include <stddef.h>
 #include <stdint.h>
+#include <limits.h>
 
 #if defined(__cplusplus)
 extern "C" {
@@ -75,8 +64,9 @@ extern "C" {
     uint32_t h[8];
     uint32_t t[2];
     uint32_t f[2];
-    uint8_t  buf[2 * BLAKE2S_BLOCKBYTES];
-    size_t   buflen;
+    uint8_t  buf[BLAKE2S_BLOCKBYTES];
+    unsigned buflen;
+    unsigned outlen;
     uint8_t  last_node;
   } blake2s_state;
 
@@ -85,7 +75,7 @@ extern "C" {
     uint64_t h[8];
     uint64_t t[2];
     uint64_t f[2];
-    uint8_t  buf[2 * BLAKE2B_BLOCKBYTES];
+    uint8_t  buf[BLAKE2B_BLOCKBYTES];
     size_t   buflen;
     uint8_t  last_node;
   } blake2b_state;
@@ -109,8 +99,9 @@ extern "C" {
   /* Ensure param structs have not been wrongly padded */
   /* Poor man's static_assert */
   enum {
-    blake2_size_check_0 = 1/!!(sizeof(blake2s_param) == sizeof(uint32_t) * 8),
-    blake2_size_check_1 = 1/!!(sizeof(blake2b_param) == sizeof(uint64_t) * 8)
+    blake2_size_check_0 = 1 / !!(CHAR_BIT == 8),
+    blake2_size_check_1 = 1 / !!(sizeof(blake2s_param) == sizeof(uint32_t) * CHAR_BIT),
+    blake2_size_check_2 = 1 / !!(sizeof(blake2b_param) == sizeof(uint64_t) * CHAR_BIT)
   };
 
   /* Streaming API */
