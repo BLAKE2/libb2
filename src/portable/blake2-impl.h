@@ -6,44 +6,33 @@
 
 #if defined(_MSC_VER)
   #define BLAKE2_INLINE __inline
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) || defined(__clang__)
   #define BLAKE2_INLINE __inline__
 #else
   #define BLAKE2_INLINE
 #endif
 
-
-
-static BLAKE2_INLINE int is_little_endian(void) {
-#if defined(__BYTE_ORDER__ ) && (__BYTE_ORDER__  == __ORDER_LITTLE_ENDIAN)
-  return 1;
-#else /* Not guaranteed to be resolved at compile time */
-  /* 
-  Compilers seem to be able to figure this out at compile time:
-    - MSVC 2013, 2015
-    - GCC 5.2
-    - Clang 3.7
-  */
-  const uint32_t x = 0x01020304;
-  unsigned char m[sizeof x];
-  memcpy(m, &x, sizeof m);
-  return m[0] == 0x04;
+#if (defined(__BYTE_ORDER__ ) && defined(__ORDER_LITTLE_ENDIAN__)            \
+     && (__BYTE_ORDER__  == __ORDER_LITTLE_ENDIAN__))                        \
+  || defined(_M_IX86) || defined(_M_X64) || defined(_M_AMD64)                \
+  || defined(__x86_64__) || defined(__i386) || defined(__i386__)             \
+  || defined(_X86_) 
+#define NATIVE_LITTLE_ENDIAN
 #endif
-}
 
 static BLAKE2_INLINE uint32_t load32(const void *src) {
-  if (is_little_endian()) {
+#if defined(NATIVE_LITTLE_ENDIAN)
     uint32_t w;
     memcpy(&w, src, sizeof w);
     return w;
-  } else {
+#else
     const uint8_t *p = (const uint8_t *)src;
     uint32_t w = *p++;
     w |= (uint32_t)(*p++) << 8;
     w |= (uint32_t)(*p++) << 16;
     w |= (uint32_t)(*p++) << 24;
     return w;
-  }
+#endif
 }
 
 static BLAKE2_INLINE uint64_t load64(const void *src) {
