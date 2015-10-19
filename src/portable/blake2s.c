@@ -271,8 +271,7 @@ int blake2s_final(blake2s_state * S, void * out, size_t outlen) {
 
 _Success_(return == 0)
 _Check_return_
-int blake2s(void *out, const void *in, const void *key, size_t outlen,
-            size_t inlen, size_t keylen) {
+int blake2s(void * out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen) {
   blake2s_state S[1];
 
   /* Verify parameters */
@@ -327,7 +326,7 @@ int blake2_test_streaming(void) {
   for (i = 0; i < sizeof m; ++i)
     m[i] = (uint8_t)rand();
 
-  if (blake2s(ref, m, NULL, BLAKE2S_OUTBYTES, sizeof m, 0) < 0) {
+  if (blake2s(ref, BLAKE2S_OUTBYTES, m, sizeof m, NULL, 0) < 0) {
     return -1;
   }
   for (i = 0; i < (1U << 16); ++i) {
@@ -376,7 +375,7 @@ int main(void) {
   for (i = 0; i < KAT_LENGTH; ++i) {
     uint8_t hash[BLAKE2S_OUTBYTES];
     int err = 0;
-    if ((err = blake2s(hash, buf, key, BLAKE2S_OUTBYTES, i, BLAKE2S_KEYBYTES)) < 0) {
+    if ((err = blake2s(hash, BLAKE2S_OUTBYTES, buf, i, key, BLAKE2S_KEYBYTES)) < 0) {
       printf("blake2s returned %d\n", err);
       return -1;
     }
