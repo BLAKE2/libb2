@@ -1,14 +1,13 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-#include <sal.h>
 
 #include "blake2.h"
 #include "blake2-impl.h"
 
 static const uint32_t blake2s_IV[8] = {
-  UINT32_C(0x6A09E667), UINT32_C(0xBB67AE85), 
-  UINT32_C(0x3C6EF372), UINT32_C(0xA54FF53A), 
+  UINT32_C(0x6A09E667), UINT32_C(0xBB67AE85),
+  UINT32_C(0x3C6EF372), UINT32_C(0xA54FF53A),
   UINT32_C(0x510E527F), UINT32_C(0x9B05688C),
   UINT32_C(0x1F83D9AB), UINT32_C(0x5BE0CD19)
 };
@@ -26,31 +25,39 @@ static const unsigned int blake2s_sigma[10][16] = {
   {10, 2, 8, 4, 7, 6, 1, 5, 15, 11, 9, 14, 3, 12, 13, 0},
 };
 
-static BLAKE2_INLINE void blake2s_set_lastnode(_Inout_ blake2s_state *S) {
+static BLAKE2_INLINE void
+blake2s_set_lastnode(blake2s_state *S) {
   S->f[1] = (uint32_t)-1;
 }
 
-static BLAKE2_INLINE void blake2s_set_lastblock(_Inout_ blake2s_state *S) {
+static BLAKE2_INLINE void
+blake2s_set_lastblock(blake2s_state *S) {
   if (S->last_node)
     blake2s_set_lastnode(S);
   S->f[0] = (uint32_t)-1;
 }
 
-static BLAKE2_INLINE void blake2s_increment_counter(_Inout_ blake2s_state *S,
-                                                    const uint32_t inc) {
+static BLAKE2_INLINE void
+blake2s_increment_counter(blake2s_state *S, uint32_t inc) {
   S->t[0] += inc;
   S->t[1] += (S->t[0] < inc);
 }
 
-static BLAKE2_INLINE void blake2s_init0(_Out_ blake2s_state * S) {
+static BLAKE2_INLINE void
+blake2s_invalidate_state(blake2s_state * S) {
+  burn(S, sizeof(*S)); /* wipe */
+  blake2s_set_lastblock(S); /* invalidate for further use */
+}
+
+static BLAKE2_INLINE void
+blake2s_init0(blake2s_state * S) {
   memset(S, 0, sizeof(*S));
   memcpy(S->h, blake2s_IV, sizeof(S->h));
 }
 
-/* init2 xors IV with input parameter block */
-_Success_(return == 0)
-int blake2s_init_param(_Out_ blake2s_state * S, _In_ const blake2s_param * P) {
-  const unsigned char *p = (const unsigned char *)(P);
+int
+blake2s_init_param(blake2s_state * S, const blake2s_param * P) {
+  const unsigned char *p = (const unsigned char *)P;
   unsigned int i;
 
   if (NULL == P || NULL == S) {
@@ -67,13 +74,16 @@ int blake2s_init_param(_Out_ blake2s_state * S, _In_ const blake2s_param * P) {
 }
 
 /* Sequential blake2s initialization */
-_Success_(return == 0)
-_Check_return_
-int blake2s_init(_Out_ blake2s_state * S, size_t outlen) {
+int
+blake2s_init(blake2s_state * S, size_t outlen) {
   blake2s_param P;
 
-  /* Move interval verification here? */
-  if((outlen == 0) || (outlen > BLAKE2S_OUTBYTES)) {
+  if( S == NULL ) {
+    return -1;
+  }
+
+  if( (outlen == 0) || (outlen > BLAKE2S_OUTBYTES) ) {
+    blake2s_invalidate_state(S);
     return -1;
   }
 
@@ -93,17 +103,22 @@ int blake2s_init(_Out_ blake2s_state * S, size_t outlen) {
   return blake2s_init_param(S, &P);
 }
 
-_Success_(return == 0)
-_Check_return_
-int blake2s_init_key(blake2s_state * S, size_t outlen, const void * key,
-                     size_t keylen) {
+int
+blake2s_init_key(blake2s_state * S, size_t outlen,
+                 const void * key, size_t keylen) {
   blake2s_param P;
 
+  if(S == NULL) {
+    return -1;
+  }
+
   if ((outlen == 0) || (outlen > BLAKE2S_OUTBYTES)) {
+    blake2s_invalidate_state(S);
     return -1;
   }
 
   if ((key == 0) || (keylen == 0) || (keylen > BLAKE2S_KEYBYTES)) {
+    blake2s_invalidate_state(S);
     return -1;
   }
 
@@ -121,6 +136,7 @@ int blake2s_init_key(blake2s_state * S, size_t outlen, const void * key,
   memset(P.personal, 0, sizeof(P.personal));
 
   if (blake2s_init_param(S, &P) < 0) {
+    blake2s_invalidate_state(S);
     return -1;
   }
 
@@ -135,8 +151,8 @@ int blake2s_init_key(blake2s_state * S, size_t outlen, const void * key,
 }
 
 
-static void blake2s_compress(blake2s_state *S,
-                            const uint8_t block[BLAKE2S_BLOCKBYTES]) {
+static void
+blake2s_compress(blake2s_state *S, const uint8_t * block) {
   uint32_t m[16];
   uint32_t v[16];
   unsigned int i, r;
@@ -149,14 +165,14 @@ static void blake2s_compress(blake2s_state *S,
     v[i] = S->h[i];
   }
 
-  v[8] = blake2s_IV[0];
-  v[9] = blake2s_IV[1];
+  v[ 8] = blake2s_IV[0];
+  v[ 9] = blake2s_IV[1];
   v[10] = blake2s_IV[2];
   v[11] = blake2s_IV[3];
-  v[12] = S->t[0] ^ blake2s_IV[4];
-  v[13] = S->t[1] ^ blake2s_IV[5];
-  v[14] = S->f[0] ^ blake2s_IV[6];
-  v[15] = S->f[1] ^ blake2s_IV[7];
+  v[12] = blake2s_IV[4] ^ S->t[0];
+  v[13] = blake2s_IV[5] ^ S->t[1];
+  v[14] = blake2s_IV[6] ^ S->f[0];
+  v[15] = blake2s_IV[7] ^ S->f[1];
 
 #define G(r, i, a, b, c, d)                                                    \
   do {                                                                         \
@@ -172,14 +188,14 @@ static void blake2s_compress(blake2s_state *S,
 
 #define ROUND(r)                                                               \
   do {                                                                         \
-    G(r, 0, v[0], v[4], v[8], v[12]);                                          \
-    G(r, 1, v[1], v[5], v[9], v[13]);                                          \
-    G(r, 2, v[2], v[6], v[10], v[14]);                                         \
-    G(r, 3, v[3], v[7], v[11], v[15]);                                         \
-    G(r, 4, v[0], v[5], v[10], v[15]);                                         \
-    G(r, 5, v[1], v[6], v[11], v[12]);                                         \
-    G(r, 6, v[2], v[7], v[8], v[13]);                                          \
-    G(r, 7, v[3], v[4], v[9], v[14]);                                          \
+    G(r, 0, v[ 0], v[ 4], v[ 8], v[12]);                                       \
+    G(r, 1, v[ 1], v[ 5], v[ 9], v[13]);                                       \
+    G(r, 2, v[ 2], v[ 6], v[10], v[14]);                                       \
+    G(r, 3, v[ 3], v[ 7], v[11], v[15]);                                       \
+    G(r, 4, v[ 0], v[ 5], v[10], v[15]);                                       \
+    G(r, 5, v[ 1], v[ 6], v[11], v[12]);                                       \
+    G(r, 6, v[ 2], v[ 7], v[ 8], v[13]);                                       \
+    G(r, 7, v[ 3], v[ 4], v[ 9], v[14]);                                       \
   } while ((void)0,0)
 
   for (r = 0; r < 10U; ++r) {
@@ -194,9 +210,8 @@ static void blake2s_compress(blake2s_state *S,
 #undef ROUND
 }
 
-_Success_(return == 0)
-_Check_return_
-int blake2s_update(blake2s_state *S, const void *in, size_t inlen) {
+int
+blake2s_update(blake2s_state *S, const void *in, size_t inlen) {
   const uint8_t *pin = (const uint8_t *)in;
 
   if (inlen == 0) {
@@ -233,45 +248,16 @@ int blake2s_update(blake2s_state *S, const void *in, size_t inlen) {
   }
   memcpy(&S->buf[S->buflen], pin, inlen);
   S->buflen += (unsigned int)inlen;
-  
-  //for (;;) {
-  //  if (S->buflen + inlen <= BLAKE2S_BLOCKBYTES) {
-  //    memcpy(&S->buf[S->buflen], pin, inlen);
-  //    S->buflen += (unsigned int)inlen;
-  //    break;
-  //  } else { /* S->buflen + inlen > BLAKE2S_BLOCKBYTES */
-  //    /* Complete current block */
-  //    size_t left = S->buflen;
-  //    size_t fill = BLAKE2S_BLOCKBYTES - left;
-  //    memcpy(&S->buf[left], pin, fill);
-  //    blake2s_increment_counter(S, BLAKE2S_BLOCKBYTES);
-  //    blake2s_compress(S, S->buf);
-  //    S->buflen = 0;
-  //    inlen -= fill;
-  //    pin += fill;
-  //    /* Avoid buffer copies when possible */
-  //    while (inlen > BLAKE2S_BLOCKBYTES) {
-  //      blake2s_increment_counter(S, BLAKE2S_BLOCKBYTES);
-  //      blake2s_compress(S, pin);
-  //      inlen -= BLAKE2S_BLOCKBYTES;
-  //      pin += BLAKE2S_BLOCKBYTES;
-  //    }
-  //  }
-  //}
   return 0;
 }
 
-_Success_(return == 0)
-_Check_return_
-int blake2s_final(_Inout_ blake2s_state * S, _Out_writes_bytes_(outlen) void * out, _In_ size_t outlen) {
+int
+blake2s_final(blake2s_state * S, void * out, size_t outlen) {
   uint8_t buffer[BLAKE2S_OUTBYTES] = {0};
   unsigned int i;
 
-  /* outgoing buffer is zeroed regardless of operation success */
-  burn(out, outlen); 
-
   /* Sanity checks */
-  if (S == NULL || out == NULL /*|| outlen < S->outlen*/) {
+  if (S == NULL || out == NULL || outlen < S->outlen) {
     return -1;
   }
 
@@ -296,100 +282,63 @@ int blake2s_final(_Inout_ blake2s_state * S, _Out_writes_bytes_(outlen) void * o
   return 0;
 }
 
-_Success_(return == 0)
-_Check_return_
-int blake2s(void * out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen) {
+int
+blake2s(void * out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen) {
   blake2s_state S;
+  int ret = -1;
 
   /* Verify parameters */
   if (NULL == in && inlen > 0) {
-    return -1;
+    goto fail;
   }
 
   if (NULL == out || outlen == 0 || outlen > BLAKE2S_OUTBYTES) {
-    return -1;
+    goto fail;
   }
 
   if ((NULL == key && keylen > 0) || keylen > BLAKE2S_KEYBYTES) {
-    return -1;
+    goto fail;
   }
 
   if (keylen > 0) {
     if (blake2s_init_key(&S, outlen, key, keylen) < 0) {
-      return -1;
+      goto fail;
     }
   } else {
     if (blake2s_init(&S, outlen) < 0) {
-      return -1;
+      goto fail;
     }
   }
 
   if (blake2s_update(&S, in, inlen) < 0) {
-    return -1;
+    goto fail;
   }
-  return blake2s_final(&S, out, outlen);
+  ret = blake2s_final(&S, out, outlen);
+
+fail:
+  burn(&S, sizeof(S));
+  return ret;
 }
 
 #define BLAKE2S_SELFTEST
 #if defined(BLAKE2S_SELFTEST)
 
 #include <stdlib.h>
+#include <assert.h>
 #include "blake2-kat.h"
-
-static int blake2_test_streaming(void) {
-  static uint8_t m[1U << 16];
-  uint8_t ref[BLAKE2S_OUTBYTES] = { 0 };
-  uint8_t chk[BLAKE2S_OUTBYTES] = { 0 };
-  unsigned int i;
-  
-  for (i = 0; i < sizeof m; ++i)
-    m[i] = (uint8_t)rand();
-
-  if (blake2s(ref, BLAKE2S_OUTBYTES, m, sizeof m, NULL, 0) < 0) {
-    return -1;
-  }
-  for (i = 0; i < (1U << 16); ++i) {
-    blake2s_state S;
-    size_t mlen = sizeof m;
-    uint8_t * p = m;
-    burn(chk, sizeof chk);
-    burn(&S, sizeof S);
-    if (blake2s_init(&S, BLAKE2S_OUTBYTES) < 0) {
-      return -1;
-    }
-    while (mlen > 1) {
-      size_t n = (size_t)rand() % mlen;
-      if (blake2s_update(&S, p, n) < 0) {
-        return -1;
-      }
-      mlen -= n;
-      p += n;
-    }
-    if (blake2s_update(&S, p, mlen) < 0) {
-      return -1;
-    }
-    if (blake2s_final(&S, chk, sizeof chk) < 0) {
-      return -1;
-    }
-    if (0 != memcmp(ref, chk, BLAKE2S_OUTBYTES)) {
-      printf("error at %u\n", i);
-      return -1;
-    }
-  }
-  puts("ok");
-  return 0;
-}
 
 int main(void) {
   uint8_t key[BLAKE2S_KEYBYTES];
   uint8_t buf[KAT_LENGTH];
-  unsigned int i;
+  unsigned int i, step;
 
-  for (i = 0; i < BLAKE2S_KEYBYTES; ++i)
+  for (i = 0; i < BLAKE2S_KEYBYTES; ++i) {
     key[i] = (uint8_t)i;
+  }
 
-  for (i = 0; i < KAT_LENGTH; ++i)
+  for (i = 0; i < KAT_LENGTH; ++i) {
     buf[i] = (uint8_t)i;
+  }
 
   for (i = 0; i < KAT_LENGTH; ++i) {
     uint8_t hash[BLAKE2S_OUTBYTES];
@@ -404,9 +353,59 @@ int main(void) {
       return -1;
     }
   }
-
   puts("ok");
-  blake2_test_streaming();
+
+  /* Test streaming API */
+  for(step = 1; step < BLAKE2S_BLOCKBYTES; ++step) {
+    for (i = 0; i < KAT_LENGTH; ++i) {
+      uint8_t hash[BLAKE2S_OUTBYTES];
+      blake2s_state S;
+      uint8_t * p = buf;
+      size_t mlen = i;
+      int err = 0;
+
+      if( (err = blake2s_init_key(&S, BLAKE2S_OUTBYTES, key, BLAKE2S_KEYBYTES)) < 0 ) {
+        printf("blake2s_init_key returned %d\n", err);
+        return -1;
+      }
+
+      while (mlen >= step) {
+        if ( (err = blake2s_update(&S, p, step)) < 0 ) {
+          printf("blake2s_update returned %d\n", err);
+          return -1;
+        }
+        mlen -= step;
+        p += step;
+      }
+      if ( (err = blake2s_update(&S, p, mlen)) < 0) {
+        printf("blake2s_update returned %d\n", err);
+        return -1;
+      }
+      if ( (err = blake2s_final(&S, hash, BLAKE2S_OUTBYTES)) < 0) {
+        printf("blake2s_final returned %d\n", err);
+        return -1;
+      }
+
+      if (0 != memcmp(hash, blake2s_keyed_kat[i], BLAKE2S_OUTBYTES)) {
+        printf("error at %u\n", i);
+        return -1;
+      }
+    }
+  }
+  puts("ok");
+
+  /* Test error checking */
+  {
+    blake2s_state S;
+    uint8_t hash[BLAKE2S_OUTBYTES];
+    assert( blake2s_init(&S, BLAKE2S_OUTBYTES + 1) < 0 ); /* Output too large */
+    assert( blake2s_init_key(&S, BLAKE2S_OUTBYTES, NULL, 1) < 0 ); /* NULL key */
+    assert( blake2s_init(&S, BLAKE2S_OUTBYTES) == 0 ); /* OK */
+    assert( blake2s_final(&S, hash, sizeof hash) == 0 ); /* OK */
+    assert( blake2s_final(&S, hash, sizeof hash) < 0 ); /* invalid state */
+    assert( blake2s_update(&S, hash, sizeof hash) < 0 ); /* invalid state */
+  }
+  puts("ok");
   return 0;
 }
 #endif
