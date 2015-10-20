@@ -136,6 +136,13 @@ int blake2sp(void *out, size_t outlen, const void *in, size_t inlen,
 int blake2bp(void *out, size_t outlen, const void *in, size_t inlen,
              const void *key, size_t keylen);
 
+/* Self-test functions */
+int blake2s_selftest(void);
+int blake2b_selftest(void);
+int blake2sp_selftest(void);
+int blake2bp_selftest(void);
+int blake2_selftest(void); /* Runs all of the above */
+
 /* Set the default to blake2b */
 #define blake2 blake2b
 #if defined(__cplusplus)

@@ -320,14 +320,9 @@ fail:
   return ret;
 }
 
-#define BLAKE2S_SELFTEST
-#if defined(BLAKE2S_SELFTEST)
-
-#include <stdlib.h>
-#include <assert.h>
 #include "blake2-kat.h"
 
-int main(void) {
+int blake2s_selftest(void) {
   uint8_t key[BLAKE2S_KEYBYTES];
   uint8_t buf[KAT_LENGTH];
   unsigned int i, step;
@@ -344,16 +339,13 @@ int main(void) {
     uint8_t hash[BLAKE2S_OUTBYTES];
     int err = 0;
     if ((err = blake2s(hash, BLAKE2S_OUTBYTES, buf, i, key, BLAKE2S_KEYBYTES)) < 0) {
-      printf("blake2s returned %d\n", err);
       return -1;
     }
 
     if (0 != memcmp(hash, blake2s_keyed_kat[i], BLAKE2S_OUTBYTES)) {
-      printf("error at %u\n", i);
-      return -1;
+      return -2;
     }
   }
-  puts("ok");
 
   /* Test streaming API */
   for(step = 1; step < BLAKE2S_BLOCKBYTES; ++step) {
@@ -365,47 +357,62 @@ int main(void) {
       int err = 0;
 
       if( (err = blake2s_init_key(&S, BLAKE2S_OUTBYTES, key, BLAKE2S_KEYBYTES)) < 0 ) {
-        printf("blake2s_init_key returned %d\n", err);
-        return -1;
+        return -3;
       }
 
       while (mlen >= step) {
         if ( (err = blake2s_update(&S, p, step)) < 0 ) {
-          printf("blake2s_update returned %d\n", err);
-          return -1;
+          return -4;
         }
         mlen -= step;
         p += step;
       }
       if ( (err = blake2s_update(&S, p, mlen)) < 0) {
-        printf("blake2s_update returned %d\n", err);
-        return -1;
+        return -5;
       }
       if ( (err = blake2s_final(&S, hash, BLAKE2S_OUTBYTES)) < 0) {
-        printf("blake2s_final returned %d\n", err);
-        return -1;
+        return -6;
       }
 
       if (0 != memcmp(hash, blake2s_keyed_kat[i], BLAKE2S_OUTBYTES)) {
-        printf("error at %u\n", i);
-        return -1;
+        return -7;
       }
     }
   }
-  puts("ok");
 
   /* Test error checking */
   {
     blake2s_state S;
     uint8_t hash[BLAKE2S_OUTBYTES];
-    assert( blake2s_init(&S, BLAKE2S_OUTBYTES + 1) < 0 ); /* Output too large */
-    assert( blake2s_init_key(&S, BLAKE2S_OUTBYTES, NULL, 1) < 0 ); /* NULL key */
-    assert( blake2s_init(&S, BLAKE2S_OUTBYTES) == 0 ); /* OK */
-    assert( blake2s_final(&S, hash, sizeof hash) == 0 ); /* OK */
-    assert( blake2s_final(&S, hash, sizeof hash) < 0 ); /* invalid state */
-    assert( blake2s_update(&S, hash, sizeof hash) < 0 ); /* invalid state */
+    if( !(blake2s_init(&S, BLAKE2S_OUTBYTES + 1) < 0) ) { /* Output too large */
+      return -8;
+    }
+    if( !(blake2s_init_key(&S, BLAKE2S_OUTBYTES, NULL, 1) < 0) ) { /* NULL key */
+      return -9;
+    }
+    if( !(blake2s_init(&S, BLAKE2S_OUTBYTES) == 0) ) { /* OK */
+      return -10;
+    }
+    if( !(blake2s_final(&S, hash, sizeof hash) == 0) ) { /* OK */
+      return -11;
+    }
+    if( !(blake2s_final(&S, hash, sizeof hash) < 0) ) { /* invalid state */
+      return -12;
+    }
+    if( !(blake2s_update(&S, hash, sizeof hash) < 0) ) { /* invalid state */
+      return -13;
+    }
   }
-  puts("ok");
+  return 0;
+}
+
+#define BLAKE2S_SELFTEST
+#if defined(BLAKE2S_SELFTEST)
+
+#include <stdlib.h>
+
+int main(void) {
+  printf("%s\n", blake2s_selftest() < 0 ? "error" : "ok");
   return 0;
 }
 #endif
