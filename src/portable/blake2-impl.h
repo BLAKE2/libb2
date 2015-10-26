@@ -12,13 +12,15 @@
   #define BLAKE2_INLINE
 #endif
 
+/*
 #if (defined(__BYTE_ORDER__ ) && defined(__ORDER_LITTLE_ENDIAN__)            \
      && (__BYTE_ORDER__  == __ORDER_LITTLE_ENDIAN__))                        \
   || defined(_M_IX86) || defined(_M_X64) || defined(_M_AMD64)                \
   || defined(__x86_64__) || defined(__i386) || defined(__i386__)             \
-  || defined(_X86_) 
+  || defined(_X86_)
 #define NATIVE_LITTLE_ENDIAN
 #endif
+*/
 
 static BLAKE2_INLINE uint32_t load32(const void *src) {
 #if defined(NATIVE_LITTLE_ENDIAN)
@@ -129,7 +131,10 @@ static BLAKE2_INLINE uint64_t rotr64(const uint64_t w, const unsigned c) {
 /* prevents compiler optimizing out memset() */
 static BLAKE2_INLINE void burn(void *v, size_t n) {
   static void *(* const volatile memset_v)(void *, int, size_t) = &memset;
-  memset_v(v, 0, n);
+  // memset_v(v, 0, n);
+  size_t i;
+  for(i = 0; i < n; ++i)
+    ((volatile unsigned char *)v)[i] = 0;
 }
 
 #endif
