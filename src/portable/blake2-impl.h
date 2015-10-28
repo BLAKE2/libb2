@@ -131,10 +131,7 @@ static BLAKE2_INLINE uint64_t rotr64(const uint64_t w, const unsigned c) {
 /* prevents compiler optimizing out memset() */
 static BLAKE2_INLINE void burn(void *v, size_t n) {
   static void *(* const volatile memset_v)(void *, int, size_t) = &memset;
-  // memset_v(v, 0, n);
-  size_t i;
-  for(i = 0; i < n; ++i)
-    ((volatile unsigned char *)v)[i] = 0;
+  memset_v(v, 0, n);
 }
 
 #endif
