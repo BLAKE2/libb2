@@ -16,6 +16,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 #include "config.h"
 
 #define BLAKE2_IMPL_CAT(x,y) x ## y
@@ -128,11 +129,10 @@ static inline uint64_t rotr64( const uint64_t w, const unsigned c )
 }
 
 /* prevents compiler optimizing out memset() */
-static inline void secure_zero_memory( void *v, size_t n )
+static inline void secure_zero_memory(void *v, size_t n)
 {
-  volatile uint8_t *p = ( volatile uint8_t * )v;
-
-  while( n-- ) *p++ = 0;
+  static void *(*const volatile memset_v)(void *, int, size_t) = &memset;
+  memset_v(v, 0, n);
 }
 
 #endif
