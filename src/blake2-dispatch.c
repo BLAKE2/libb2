@@ -462,32 +462,32 @@ int blake2b_dispatch( uint8_t *out, const void *in, const void *key, size_t outl
   return blake2b_ptr( out, in, key, outlen, inlen, keylen );
 }
 
-EXPORT_DLL int blake2b_init( blake2b_state *S, size_t outlen )
+BLAKE2_API int blake2b_init( blake2b_state *S, size_t outlen )
 {
   return blake2b_init_ptr( S, outlen );
 }
 
-EXPORT_DLL int blake2b_init_key( blake2b_state *S, size_t outlen, const void *key, size_t keylen )
+BLAKE2_API int blake2b_init_key( blake2b_state *S, size_t outlen, const void *key, size_t keylen )
 {
   return blake2b_init_key_ptr( S, outlen, key, keylen );
 }
 
-EXPORT_DLL int blake2b_init_param( blake2b_state *S, const blake2b_param *P )
+BLAKE2_API int blake2b_init_param( blake2b_state *S, const blake2b_param *P )
 {
   return blake2b_init_param_ptr( S, P );
 }
 
-EXPORT_DLL int blake2b_update( blake2b_state *S, const uint8_t *in, size_t inlen )
+BLAKE2_API int blake2b_update( blake2b_state *S, const uint8_t *in, size_t inlen )
 {
   return blake2b_update_ptr( S, in, inlen );
 }
 
-EXPORT_DLL int blake2b_final( blake2b_state *S, uint8_t *out, size_t outlen )
+BLAKE2_API int blake2b_final( blake2b_state *S, uint8_t *out, size_t outlen )
 {
   return blake2b_final_ptr( S, out, outlen );
 }
 
-EXPORT_DLL int blake2b( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen )
+BLAKE2_API int blake2b( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen )
 {
   return blake2b_ptr( out, in, key, outlen, inlen, keylen );
 }
@@ -528,32 +528,32 @@ int blake2s_dispatch( uint8_t *out, const void *in, const void *key, size_t outl
   return blake2s_ptr( out, in, key, outlen, inlen, keylen );
 }
 
-EXPORT_DLL int blake2s_init( blake2s_state *S, size_t outlen )
+BLAKE2_API int blake2s_init( blake2s_state *S, size_t outlen )
 {
   return blake2s_init_ptr( S, outlen );
 }
 
-EXPORT_DLL int blake2s_init_key( blake2s_state *S, size_t outlen, const void *key, size_t keylen )
+BLAKE2_API int blake2s_init_key( blake2s_state *S, size_t outlen, const void *key, size_t keylen )
 {
   return blake2s_init_key_ptr( S, outlen, key, keylen );
 }
 
-EXPORT_DLL int blake2s_init_param( blake2s_state *S, const blake2s_param *P )
+BLAKE2_API int blake2s_init_param( blake2s_state *S, const blake2s_param *P )
 {
   return blake2s_init_param_ptr( S, P );
 }
 
-EXPORT_DLL int blake2s_update( blake2s_state *S, const uint8_t *in, size_t inlen )
+BLAKE2_API int blake2s_update( blake2s_state *S, const uint8_t *in, size_t inlen )
 {
   return blake2s_update_ptr( S, in, inlen );
 }
 
-EXPORT_DLL int blake2s_final( blake2s_state *S, uint8_t *out, size_t outlen )
+BLAKE2_API int blake2s_final( blake2s_state *S, uint8_t *out, size_t outlen )
 {
   return blake2s_final_ptr( S, out, outlen );
 }
 
-EXPORT_DLL int blake2s( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen )
+BLAKE2_API int blake2s( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen )
 {
   return blake2s_ptr( out, in, key, outlen, inlen, keylen );
 }

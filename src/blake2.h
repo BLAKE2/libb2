@@ -17,22 +17,40 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#if defined(_MSC_VER)
-  #if defined(DYNAMIC_LIB)
-    #if defined(DYNAMIC_LIB_EXPORT)
-      #define EXPORT_DLL __declspec(dllexport)
-    #else
-      #define EXPORT_DLL __declspec(dllimport)
-    #endif
+#ifndef DLL_HELPER_DEFINED
+  #define DLL_HELPER_DEFINED
+  
+  #if defined(_WIN32) || defined(__CYGWIN__)
+    #define _DLL_IMPORT __declspec(dllimport)
+    #define _DLL_EXPORT __declspec(dllexport)
+    #define _DLL_PRIVATE
+  #elif __GNUC__ >= 4
+    #define _DLL_IMPORT   __attribute__ ((visibility ("default")))
+    #define _DLL_EXPORT   __attribute__ ((visibility ("default")))
+    #define _DLL_PRIVATE  __attribute__ ((visibility ("hidden")))
   #else
-    #define EXPORT_DLL
+    #define _DLL_IMPORT
+    #define _DLL_EXPORT
+    #define _DLL_PRIVATE
   #endif
+#endif
+
+#if defined(BLAKE2_DLL)
+  #if defined(BLAKE2_DLL_EXPORTS) // defined if we are building the DLL
+    #define BLAKE2_API _DLL_EXPORT
+  #else
+    #define BLAKE2_API _DLL_IMPORT
+  #endif
+  #define BLAKE2_PRIVATE _DLL_PRIVATE // must only be used by hidden logic
 #else
-  #define EXPORT_DLL
+  #define BLAKE2_API
+  #define BLAKE2_PRIVATE
 #endif
 
 #if defined(__cplusplus)
 extern "C" {
+#elif defined(_MSC_VER) && !defined(inline)
+#define inline __inline
 #endif
 
   enum blake2s_constant
@@ -126,34 +144,34 @@ extern "C" {
 #pragma pack(pop)
 
   // Streaming API
-  EXPORT_DLL int blake2s_init( blake2s_state *S, size_t outlen );
-  EXPORT_DLL int blake2s_init_key( blake2s_state *S, size_t outlen, const void *key, size_t keylen );
-  EXPORT_DLL int blake2s_init_param( blake2s_state *S, const blake2s_param *P );
-  EXPORT_DLL int blake2s_update( blake2s_state *S, const uint8_t *in, size_t inlen );
-  EXPORT_DLL int blake2s_final( blake2s_state *S, uint8_t *out, size_t outlen );
+  BLAKE2_API int blake2s_init( blake2s_state *S, size_t outlen );
+  BLAKE2_API int blake2s_init_key( blake2s_state *S, size_t outlen, const void *key, size_t keylen );
+  BLAKE2_API int blake2s_init_param( blake2s_state *S, const blake2s_param *P );
+  BLAKE2_API int blake2s_update( blake2s_state *S, const uint8_t *in, size_t inlen );
+  BLAKE2_API int blake2s_final( blake2s_state *S, uint8_t *out, size_t outlen );
 
-  EXPORT_DLL int blake2b_init( blake2b_state *S, size_t outlen );
-  EXPORT_DLL int blake2b_init_key( blake2b_state *S, size_t outlen, const void *key, size_t keylen );
-  EXPORT_DLL int blake2b_init_param( blake2b_state *S, const blake2b_param *P );
-  EXPORT_DLL int blake2b_update( blake2b_state *S, const uint8_t *in, size_t inlen );
-  EXPORT_DLL int blake2b_final( blake2b_state *S, uint8_t *out, size_t outlen );
+  BLAKE2_API int blake2b_init( blake2b_state *S, size_t outlen );
+  BLAKE2_API int blake2b_init_key( blake2b_state *S, size_t outlen, const void *key, size_t keylen );
+  BLAKE2_API int blake2b_init_param( blake2b_state *S, const blake2b_param *P );
+  BLAKE2_API int blake2b_update( blake2b_state *S, const uint8_t *in, size_t inlen );
+  BLAKE2_API int blake2b_final( blake2b_state *S, uint8_t *out, size_t outlen );
 
-  EXPORT_DLL int blake2sp_init( blake2sp_state *S, size_t outlen );
-  EXPORT_DLL int blake2sp_init_key( blake2sp_state *S, size_t outlen, const void *key, size_t keylen );
-  EXPORT_DLL int blake2sp_update( blake2sp_state *S, const uint8_t *in, size_t inlen );
-  EXPORT_DLL int blake2sp_final( blake2sp_state *S, uint8_t *out, size_t outlen );
+  BLAKE2_API int blake2sp_init( blake2sp_state *S, size_t outlen );
+  BLAKE2_API int blake2sp_init_key( blake2sp_state *S, size_t outlen, const void *key, size_t keylen );
+  BLAKE2_API int blake2sp_update( blake2sp_state *S, const uint8_t *in, size_t inlen );
+  BLAKE2_API int blake2sp_final( blake2sp_state *S, uint8_t *out, size_t outlen );
 
-  EXPORT_DLL int blake2bp_init( blake2bp_state *S, size_t outlen );
-  EXPORT_DLL int blake2bp_init_key( blake2bp_state *S, size_t outlen, const void *key, size_t keylen );
-  EXPORT_DLL int blake2bp_update( blake2bp_state *S, const uint8_t *in, size_t inlen );
-  EXPORT_DLL int blake2bp_final( blake2bp_state *S, uint8_t *out, size_t outlen );
+  BLAKE2_API int blake2bp_init( blake2bp_state *S, size_t outlen );
+  BLAKE2_API int blake2bp_init_key( blake2bp_state *S, size_t outlen, const void *key, size_t keylen );
+  BLAKE2_API int blake2bp_update( blake2bp_state *S, const uint8_t *in, size_t inlen );
+  BLAKE2_API int blake2bp_final( blake2bp_state *S, uint8_t *out, size_t outlen );
 
   // Simple API
-  EXPORT_DLL int blake2s( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
-  EXPORT_DLL int blake2b( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
+  BLAKE2_API int blake2s( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
+  BLAKE2_API int blake2b( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
 
-  EXPORT_DLL int blake2sp( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
-  EXPORT_DLL int blake2bp( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
+  BLAKE2_API int blake2sp( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
+  BLAKE2_API int blake2bp( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
 
   static inline int blake2( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen )
   {
