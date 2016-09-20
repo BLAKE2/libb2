@@ -187,7 +187,7 @@ int blake2b_init( blake2b_state *S, size_t outlen )
 
   if ( ( !outlen ) || ( outlen > BLAKE2B_OUTBYTES ) ) return -1;
 
-  P->digest_length = outlen;
+  P->digest_length = ( uint8_t ) outlen;
   P->key_length    = 0;
   P->fanout        = 1;
   P->depth         = 1;
@@ -210,8 +210,8 @@ int blake2b_init_key( blake2b_state *S, size_t outlen, const void *key, size_t k
 
   if ( !key || !keylen || keylen > BLAKE2B_KEYBYTES ) return -1;
 
-  P->digest_length = outlen;
-  P->key_length    = keylen;
+  P->digest_length = ( uint8_t ) outlen;
+  P->key_length    = ( uint8_t ) keylen;
   P->fanout        = 1;
   P->depth         = 1;
   store32( &P->leaf_length, 0 );
@@ -238,7 +238,7 @@ static int blake2b_compress( blake2b_state *S, const uint8_t block[BLAKE2B_BLOCK
 {
   uint64_t m[16];
   uint64_t v[16];
-  int i;
+  size_t i;
 
   for( i = 0; i < 16; ++i )
     m[i] = load64( block + i * sizeof( m[i] ) );
@@ -302,8 +302,8 @@ int blake2b_update( blake2b_state *S, const uint8_t *in, size_t inlen )
 {
   while( inlen > 0 )
   {
-    size_t left = S->buflen;
-    size_t fill = 2 * BLAKE2B_BLOCKBYTES - left;
+    uint32_t left = S->buflen;
+    uint32_t fill = 2 * BLAKE2B_BLOCKBYTES - left;
 
     if( inlen > fill )
     {
@@ -319,7 +319,7 @@ int blake2b_update( blake2b_state *S, const uint8_t *in, size_t inlen )
     else // inlen <= fill
     {
       memcpy( S->buf + left, in, inlen );
-      S->buflen += inlen; // Be lazy, do not compress
+      S->buflen += ( uint32_t ) inlen; // Be lazy, do not compress
       in += inlen;
       inlen -= inlen;
     }
@@ -331,6 +331,7 @@ int blake2b_update( blake2b_state *S, const uint8_t *in, size_t inlen )
 int blake2b_final( blake2b_state *S, uint8_t *out, size_t outlen )
 {
   uint8_t buffer[BLAKE2B_OUTBYTES];
+  size_t i;
 
   if(S->outlen != outlen) return -1;
 
@@ -347,7 +348,7 @@ int blake2b_final( blake2b_state *S, uint8_t *out, size_t outlen )
   memset( S->buf + S->buflen, 0, 2 * BLAKE2B_BLOCKBYTES - S->buflen ); /* Padding */
   blake2b_compress( S, S->buf );
 
-  for( int i = 0; i < 8; ++i ) /* Output full hash to temp buffer */
+  for( i = 0; i < 8; ++i ) /* Output full hash to temp buffer */
     store64( buffer + sizeof( S->h[i] ) * i, S->h[i] );
 
   memcpy( out, buffer, outlen );

@@ -71,15 +71,15 @@ int blake2bp_init( blake2bp_state *S, size_t outlen )
   memset( S->buf, 0, sizeof( S->buf ) );
   S->buflen = 0;
 
-  if( blake2bp_init_root( S->R, outlen, 0 ) < 0 )
+  if( blake2bp_init_root( S->R, ( uint8_t ) outlen, 0 ) < 0 )
     return -1;
 
   for( size_t i = 0; i < PARALLELISM_DEGREE; ++i )
-    if( blake2bp_init_leaf( S->S[i], outlen, 0, i ) < 0 ) return -1;
+    if( blake2bp_init_leaf( S->S[i], ( uint8_t ) outlen, 0, i ) < 0 ) return -1;
 
   S->R->last_node = 1;
   S->S[PARALLELISM_DEGREE - 1]->last_node = 1;
-  S->outlen = outlen;
+  S->outlen = ( uint8_t ) outlen;
   return 0;
 }
 
@@ -92,15 +92,16 @@ int blake2bp_init_key( blake2bp_state *S, size_t outlen, const void *key, size_t
   memset( S->buf, 0, sizeof( S->buf ) );
   S->buflen = 0;
 
-  if( blake2bp_init_root( S->R, outlen, keylen ) < 0 )
+  if( blake2bp_init_root( S->R, ( uint8_t ) outlen, ( uint8_t ) keylen ) < 0 )
     return -1;
 
   for( size_t i = 0; i < PARALLELISM_DEGREE; ++i )
-    if( blake2bp_init_leaf( S->S[i], outlen, keylen, i ) < 0 ) return -1;
+    if( blake2bp_init_leaf( S->S[i], ( uint8_t ) outlen, ( uint8_t ) keylen, i ) < 0 )
+      return -1;
 
   S->R->last_node = 1;
   S->S[PARALLELISM_DEGREE - 1]->last_node = 1;
-  S->outlen = outlen;
+  S->outlen = ( uint8_t ) outlen;
   {
     uint8_t block[BLAKE2B_BLOCKBYTES];
     memset( block, 0, BLAKE2B_BLOCKBYTES );
@@ -140,7 +141,7 @@ int blake2bp_update( blake2bp_state *S, const uint8_t *in, size_t inlen )
 #endif
   {
 #if defined(_OPENMP)
-    size_t      id__ = omp_get_thread_num();
+    size_t      id__ = ( size_t ) omp_get_thread_num();
 #endif
     size_t inlen__ = inlen;
     const uint8_t *in__ = ( const uint8_t * )in;
@@ -160,7 +161,7 @@ int blake2bp_update( blake2bp_state *S, const uint8_t *in, size_t inlen )
   if( inlen > 0 )
     memcpy( S->buf + left, in, inlen );
 
-  S->buflen = left + inlen;
+  S->buflen = ( uint32_t ) left + ( uint32_t ) inlen;
   return 0;
 }
 
@@ -210,7 +211,8 @@ int blake2bp( uint8_t *out, const void *in, const void *key, size_t outlen, size
   if( keylen > BLAKE2B_KEYBYTES ) return -1;
 
   for( size_t i = 0; i < PARALLELISM_DEGREE; ++i )
-    if( blake2bp_init_leaf( S[i], outlen, keylen, i ) < 0 ) return -1;
+    if( blake2bp_init_leaf( S[i], ( uint8_t ) outlen, ( uint8_t ) keylen, i ) < 0 )
+      return -1;
 
   S[PARALLELISM_DEGREE - 1]->last_node = 1; // mark last node
 
@@ -234,7 +236,7 @@ int blake2bp( uint8_t *out, const void *in, const void *key, size_t outlen, size
 #endif
   {
 #if defined(_OPENMP)
-    size_t      id__ = omp_get_thread_num();
+    size_t      id__ = ( size_t ) omp_get_thread_num();
 #endif
     size_t inlen__ = inlen;
     const uint8_t *in__ = ( const uint8_t * )in;
@@ -257,7 +259,7 @@ int blake2bp( uint8_t *out, const void *in, const void *key, size_t outlen, size
     blake2b_final( S[id__], hash[id__], BLAKE2B_OUTBYTES );
   }
 
-  if( blake2bp_init_root( FS, outlen, keylen ) < 0 )
+  if( blake2bp_init_root( FS, ( uint8_t ) outlen, ( uint8_t ) keylen ) < 0 )
     return -1;
 
   FS->last_node = 1; // Mark as last node
