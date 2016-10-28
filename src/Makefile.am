@@ -19,8 +19,7 @@ lib_LTLIBRARIES = libb2.la
 libb2_la_LIBADD = # -lgomp -lpthread
 libb2_la_CPPFLAGS =  -DSUFFIX=  \
                      $(LTDLINCL) \
-                     ${top_builddir}/src/ \
-                     -Wconversion
+                     ${top_builddir}/src/
 
 include_HEADERS = blake2.h
 
