@@ -118,7 +118,7 @@ static inline cpu_feature_t get_cpu_features( void )
   }
 
   /* For future architectures */
-  /* 
+  /*
       eax = 7; ecx = 0;
       cpuid(&eax, &ebx, &ecx, &edx);
 
@@ -141,92 +141,98 @@ extern "C" {
   int blake2b_init_ref( blake2b_state *S, size_t outlen );
   int blake2b_init_key_ref( blake2b_state *S, size_t outlen, const void *key, size_t keylen );
   int blake2b_init_param_ref( blake2b_state *S, const blake2b_param *P );
-  int blake2b_update_ref( blake2b_state *S, const uint8_t *in, size_t inlen );
-  int blake2b_final_ref( blake2b_state *S, uint8_t *out, size_t outlen );
-  int blake2b_ref( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
+  int blake2b_update_ref( blake2b_state *S, const void *in, size_t inlen );
+  int blake2b_final_ref( blake2b_state *S, void *out, size_t outlen );
+  int blake2b_ref( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
+  int blake2_ref( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
 
 #if defined(HAVE_X86)
 
   int blake2b_init_sse2( blake2b_state *S, size_t outlen );
   int blake2b_init_key_sse2( blake2b_state *S, size_t outlen, const void *key, size_t keylen );
   int blake2b_init_param_sse2( blake2b_state *S, const blake2b_param *P );
-  int blake2b_update_sse2( blake2b_state *S, const uint8_t *in, size_t inlen );
-  int blake2b_final_sse2( blake2b_state *S, uint8_t *out, size_t outlen );
-  int blake2b_sse2( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
+  int blake2b_update_sse2( blake2b_state *S, const void *in, size_t inlen );
+  int blake2b_final_sse2( blake2b_state *S, void *out, size_t outlen );
+  int blake2b_sse2( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
+  int blake2_sse2( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
 
   int blake2b_init_ssse3( blake2b_state *S, size_t outlen );
   int blake2b_init_key_ssse3( blake2b_state *S, size_t outlen, const void *key, size_t keylen );
   int blake2b_init_param_ssse3( blake2b_state *S, const blake2b_param *P );
-  int blake2b_update_ssse3( blake2b_state *S, const uint8_t *in, size_t inlen );
-  int blake2b_final_ssse3( blake2b_state *S, uint8_t *out, size_t outlen );
-  int blake2b_ssse3( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
+  int blake2b_update_ssse3( blake2b_state *S, const void *in, size_t inlen );
+  int blake2b_final_ssse3( blake2b_state *S, void *out, size_t outlen );
+  int blake2b_ssse3( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
+  int blake2_ssse3( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
 
   int blake2b_init_sse41( blake2b_state *S, size_t outlen );
   int blake2b_init_key_sse41( blake2b_state *S, size_t outlen, const void *key, size_t keylen );
   int blake2b_init_param_sse41( blake2b_state *S, const blake2b_param *P );
-  int blake2b_update_sse41( blake2b_state *S, const uint8_t *in, size_t inlen );
-  int blake2b_final_sse41( blake2b_state *S, uint8_t *out, size_t outlen );
-  int blake2b_sse41( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
+  int blake2b_update_sse41( blake2b_state *S, const void *in, size_t inlen );
+  int blake2b_final_sse41( blake2b_state *S, void *out, size_t outlen );
+  int blake2b_sse41( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
+  int blake2_sse41( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
 
   int blake2b_init_avx( blake2b_state *S, size_t outlen );
   int blake2b_init_key_avx( blake2b_state *S, size_t outlen, const void *key, size_t keylen );
   int blake2b_init_param_avx( blake2b_state *S, const blake2b_param *P );
-  int blake2b_update_avx( blake2b_state *S, const uint8_t *in, size_t inlen );
-  int blake2b_final_avx( blake2b_state *S, uint8_t *out, size_t outlen );
-  int blake2b_avx( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
+  int blake2b_update_avx( blake2b_state *S, const void *in, size_t inlen );
+  int blake2b_final_avx( blake2b_state *S, void *out, size_t outlen );
+  int blake2b_avx( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
+  int blake2_avx( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
 
   int blake2b_init_xop( blake2b_state *S, size_t outlen );
   int blake2b_init_key_xop( blake2b_state *S, size_t outlen, const void *key, size_t keylen );
   int blake2b_init_param_xop( blake2b_state *S, const blake2b_param *P );
-  int blake2b_update_xop( blake2b_state *S, const uint8_t *in, size_t inlen );
-  int blake2b_final_xop( blake2b_state *S, uint8_t *out, size_t outlen );
-  int blake2b_xop( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
+  int blake2b_update_xop( blake2b_state *S, const void *in, size_t inlen );
+  int blake2b_final_xop( blake2b_state *S, void *out, size_t outlen );
+  int blake2b_xop( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
+  int blake2_xop( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
 
 #endif /* HAVE_X86 */
 
   int blake2s_init_ref( blake2s_state *S, size_t outlen );
   int blake2s_init_key_ref( blake2s_state *S, size_t outlen, const void *key, size_t keylen );
   int blake2s_init_param_ref( blake2s_state *S, const blake2s_param *P );
-  int blake2s_update_ref( blake2s_state *S, const uint8_t *in, size_t inlen );
-  int blake2s_final_ref( blake2s_state *S, uint8_t *out, size_t outlen );
-  int blake2s_ref( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
+  int blake2s_update_ref( blake2s_state *S, const void *in, size_t inlen );
+  int blake2s_final_ref( blake2s_state *S, void *out, size_t outlen );
+  int blake2s_ref( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
 
 #if defined(HAVE_X86)
 
   int blake2s_init_sse2( blake2s_state *S, size_t outlen );
   int blake2s_init_key_sse2( blake2s_state *S, size_t outlen, const void *key, size_t keylen );
   int blake2s_init_param_sse2( blake2s_state *S, const blake2s_param *P );
-  int blake2s_update_sse2( blake2s_state *S, const uint8_t *in, size_t inlen );
-  int blake2s_final_sse2( blake2s_state *S, uint8_t *out, size_t outlen );
-  int blake2s_sse2( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
+  int blake2s_update_sse2( blake2s_state *S, const void *in, size_t inlen );
+  int blake2s_final_sse2( blake2s_state *S, void *out, size_t outlen );
+  int blake2s_sse2( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
 
   int blake2s_init_ssse3( blake2s_state *S, size_t outlen );
   int blake2s_init_key_ssse3( blake2s_state *S, size_t outlen, const void *key, size_t keylen );
   int blake2s_init_param_ssse3( blake2s_state *S, const blake2s_param *P );
-  int blake2s_update_ssse3( blake2s_state *S, const uint8_t *in, size_t inlen );
-  int blake2s_final_ssse3( blake2s_state *S, uint8_t *out, size_t outlen );
-  int blake2s_ssse3( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
+  int blake2s_update_ssse3( blake2s_state *S, const void *in, size_t inlen );
+  int blake2s_final_ssse3( blake2s_state *S, void *out, size_t outlen );
+  int blake2s_ssse3( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
 
   int blake2s_init_sse41( blake2s_state *S, size_t outlen );
   int blake2s_init_key_sse41( blake2s_state *S, size_t outlen, const void *key, size_t keylen );
   int blake2s_init_param_sse41( blake2s_state *S, const blake2s_param *P );
-  int blake2s_update_sse41( blake2s_state *S, const uint8_t *in, size_t inlen );
-  int blake2s_final_sse41( blake2s_state *S, uint8_t *out, size_t outlen );
-  int blake2s_sse41( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
+  int blake2s_update_sse41( blake2s_state *S, const void *in, size_t inlen );
+  int blake2s_final_sse41( blake2s_state *S, void *out, size_t outlen );
+  int blake2s_sse41( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
 
   int blake2s_init_avx( blake2s_state *S, size_t outlen );
   int blake2s_init_key_avx( blake2s_state *S, size_t outlen, const void *key, size_t keylen );
   int blake2s_init_param_avx( blake2s_state *S, const blake2s_param *P );
-  int blake2s_update_avx( blake2s_state *S, const uint8_t *in, size_t inlen );
-  int blake2s_final_avx( blake2s_state *S, uint8_t *out, size_t outlen );
-  int blake2s_avx( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
+  int blake2s_update_avx( blake2s_state *S, const void *in, size_t inlen );
+  int blake2s_final_avx( blake2s_state *S, void *out, size_t outlen );
+  int blake2s_avx( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
 
   int blake2s_init_xop( blake2s_state *S, size_t outlen );
   int blake2s_init_key_xop( blake2s_state *S, size_t outlen, const void *key, size_t keylen );
   int blake2s_init_param_xop( blake2s_state *S, const blake2s_param *P );
-  int blake2s_update_xop( blake2s_state *S, const uint8_t *in, size_t inlen );
-  int blake2s_final_xop( blake2s_state *S, uint8_t *out, size_t outlen );
-  int blake2s_xop( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
+  int blake2s_update_xop( blake2s_state *S, const void *in, size_t inlen );
+  int blake2s_final_xop( blake2s_state *S, void *out, size_t outlen );
+  int blake2s_xop( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
 
 #endif /* HAVE_X86 */
 
@@ -237,16 +243,16 @@ extern "C" {
 typedef int ( *blake2b_init_fn )( blake2b_state *, size_t );
 typedef int ( *blake2b_init_key_fn )( blake2b_state *, size_t, const void *, size_t );
 typedef int ( *blake2b_init_param_fn )( blake2b_state *, const blake2b_param * );
-typedef int ( *blake2b_update_fn )( blake2b_state *, const uint8_t *, size_t );
-typedef int ( *blake2b_final_fn )( blake2b_state *, uint8_t *, size_t );
-typedef int ( *blake2b_fn )( uint8_t *, const void *, const void *, size_t, size_t, size_t );
+typedef int ( *blake2b_update_fn )( blake2b_state *, const void *, size_t );
+typedef int ( *blake2b_final_fn )( blake2b_state *, void *, size_t );
+typedef int ( *blake2b_fn )( void *, size_t, const void *, size_t, const void *, size_t );
 
 typedef int ( *blake2s_init_fn )( blake2s_state *, size_t );
 typedef int ( *blake2s_init_key_fn )( blake2s_state *, size_t, const void *, size_t );
 typedef int ( *blake2s_init_param_fn )( blake2s_state *, const blake2s_param * );
-typedef int ( *blake2s_update_fn )( blake2s_state *, const uint8_t *, size_t );
-typedef int ( *blake2s_final_fn )( blake2s_state *, uint8_t *, size_t );
-typedef int ( *blake2s_fn )( uint8_t *, const void *, const void *, size_t, size_t, size_t );
+typedef int ( *blake2s_update_fn )( blake2s_state *, const void *, size_t );
+typedef int ( *blake2s_final_fn )( blake2s_state *, void *, size_t );
+typedef int ( *blake2s_fn )( void *, size_t, const void *, size_t, const void *, size_t );
 
 static const blake2b_init_fn blake2b_init_table[] =
 {
@@ -317,6 +323,18 @@ static const blake2b_fn blake2b_table[] =
   blake2b_sse41,
   blake2b_avx,
   blake2b_xop
+#endif
+};
+
+static const blake2b_fn blake2_table[] =
+{
+  blake2_ref,
+#if defined(HAVE_X86)
+  blake2_sse2,
+  blake2_ssse3,
+  blake2_sse41,
+  blake2_avx,
+  blake2_xop
 #endif
 };
 
@@ -398,16 +416,17 @@ extern "C" {
   int blake2b_init_dispatch( blake2b_state *S, size_t outlen );
   int blake2b_init_key_dispatch( blake2b_state *S, size_t outlen, const void *key, size_t keylen );
   int blake2b_init_param_dispatch( blake2b_state *S, const blake2b_param *P );
-  int blake2b_update_dispatch( blake2b_state *S, const uint8_t *in, size_t inlen );
-  int blake2b_final_dispatch( blake2b_state *S, uint8_t *out, size_t outlen );
-  int blake2b_dispatch( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
+  int blake2b_update_dispatch( blake2b_state *S, const void *in, size_t inlen );
+  int blake2b_final_dispatch( blake2b_state *S, void *out, size_t outlen );
+  int blake2b_dispatch( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
+  int blake2_dispatch( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
 
   int blake2s_init_dispatch( blake2s_state *S, size_t outlen );
   int blake2s_init_key_dispatch( blake2s_state *S, size_t outlen, const void *key, size_t keylen );
   int blake2s_init_param_dispatch( blake2s_state *S, const blake2s_param *P );
-  int blake2s_update_dispatch( blake2s_state *S, const uint8_t *in, size_t inlen );
-  int blake2s_final_dispatch( blake2s_state *S, uint8_t *out, size_t outlen );
-  int blake2s_dispatch( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen );
+  int blake2s_update_dispatch( blake2s_state *S, const void *in, size_t inlen );
+  int blake2s_final_dispatch( blake2s_state *S, void *out, size_t outlen );
+  int blake2s_dispatch( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
 #if defined(__cplusplus)
 }
 #endif
@@ -418,6 +437,7 @@ static blake2b_init_param_fn blake2b_init_param_ptr = blake2b_init_param_dispatc
 static blake2b_update_fn blake2b_update_ptr = blake2b_update_dispatch;
 static blake2b_final_fn blake2b_final_ptr = blake2b_final_dispatch;
 static blake2b_fn blake2b_ptr = blake2b_dispatch;
+static blake2b_fn blake2_ptr = blake2_dispatch;
 
 static blake2s_init_fn blake2s_init_ptr = blake2s_init_dispatch;
 static blake2s_init_key_fn blake2s_init_key_ptr = blake2s_init_key_dispatch;
@@ -444,22 +464,28 @@ int blake2b_init_param_dispatch( blake2b_state *S, const blake2b_param *P )
   return blake2b_init_param_ptr( S, P );
 }
 
-int blake2b_update_dispatch( blake2b_state *S, const uint8_t *in, size_t inlen )
+int blake2b_update_dispatch( blake2b_state *S, const void *in, size_t inlen )
 {
   blake2b_update_ptr = blake2b_update_table[get_cpu_features()];
   return blake2b_update_ptr( S, in, inlen );
 }
 
-int blake2b_final_dispatch( blake2b_state *S, uint8_t *out, size_t outlen )
+int blake2b_final_dispatch( blake2b_state *S, void *out, size_t outlen )
 {
   blake2b_final_ptr = blake2b_final_table[get_cpu_features()];
   return blake2b_final_ptr( S, out, outlen );
 }
 
-int blake2b_dispatch( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen )
+int blake2b_dispatch( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen )
 {
   blake2b_ptr = blake2b_table[get_cpu_features()];
-  return blake2b_ptr( out, in, key, outlen, inlen, keylen );
+  return blake2b_ptr(out, outlen, in, inlen, key, keylen);
+}
+
+int blake2_dispatch( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen )
+{
+  blake2b_ptr = blake2_table[get_cpu_features()];
+  return blake2b_ptr(out, outlen, in, inlen, key, keylen);
 }
 
 BLAKE2_API int blake2b_init( blake2b_state *S, size_t outlen )
@@ -477,19 +503,24 @@ BLAKE2_API int blake2b_init_param( blake2b_state *S, const blake2b_param *P )
   return blake2b_init_param_ptr( S, P );
 }
 
-BLAKE2_API int blake2b_update( blake2b_state *S, const uint8_t *in, size_t inlen )
+BLAKE2_API int blake2b_update( blake2b_state *S, const void *in, size_t inlen )
 {
   return blake2b_update_ptr( S, in, inlen );
 }
 
-BLAKE2_API int blake2b_final( blake2b_state *S, uint8_t *out, size_t outlen )
+BLAKE2_API int blake2b_final( blake2b_state *S, void *out, size_t outlen )
 {
   return blake2b_final_ptr( S, out, outlen );
 }
 
-BLAKE2_API int blake2b( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen )
+BLAKE2_API int blake2b( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen )
 {
-  return blake2b_ptr( out, in, key, outlen, inlen, keylen );
+  return blake2b_ptr(out, outlen, in, inlen, key, keylen);
+}
+
+BLAKE2_API int blake2( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen )
+{
+  return blake2_ptr(out, outlen, in, inlen, key, keylen);
 }
 
 int blake2s_init_dispatch( blake2s_state *S, size_t outlen )
@@ -510,22 +541,22 @@ int blake2s_init_param_dispatch( blake2s_state *S, const blake2s_param *P )
   return blake2s_init_param_ptr( S, P );
 }
 
-int blake2s_update_dispatch( blake2s_state *S, const uint8_t *in, size_t inlen )
+int blake2s_update_dispatch( blake2s_state *S, const void *in, size_t inlen )
 {
   blake2s_update_ptr = blake2s_update_table[get_cpu_features()];
   return blake2s_update_ptr( S, in, inlen );
 }
 
-int blake2s_final_dispatch( blake2s_state *S, uint8_t *out, size_t outlen )
+int blake2s_final_dispatch( blake2s_state *S, void *out, size_t outlen )
 {
   blake2s_final_ptr = blake2s_final_table[get_cpu_features()];
   return blake2s_final_ptr( S, out, outlen );
 }
 
-int blake2s_dispatch( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen )
+int blake2s_dispatch( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen )
 {
   blake2s_ptr = blake2s_table[get_cpu_features()];
-  return blake2s_ptr( out, in, key, outlen, inlen, keylen );
+  return blake2s_ptr( out, outlen, in, inlen, key, keylen );
 }
 
 BLAKE2_API int blake2s_init( blake2s_state *S, size_t outlen )
@@ -543,18 +574,18 @@ BLAKE2_API int blake2s_init_param( blake2s_state *S, const blake2s_param *P )
   return blake2s_init_param_ptr( S, P );
 }
 
-BLAKE2_API int blake2s_update( blake2s_state *S, const uint8_t *in, size_t inlen )
+BLAKE2_API int blake2s_update( blake2s_state *S, const void *in, size_t inlen )
 {
   return blake2s_update_ptr( S, in, inlen );
 }
 
-BLAKE2_API int blake2s_final( blake2s_state *S, uint8_t *out, size_t outlen )
+BLAKE2_API int blake2s_final( blake2s_state *S, void *out, size_t outlen )
 {
   return blake2s_final_ptr( S, out, outlen );
 }
 
-BLAKE2_API int blake2s( uint8_t *out, const void *in, const void *key, size_t outlen, size_t inlen, size_t keylen )
+BLAKE2_API int blake2s( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen)
 {
-  return blake2s_ptr( out, in, key, outlen, inlen, keylen );
+  return blake2s_ptr( out, outlen, in, inlen, key, keylen );
 }
 

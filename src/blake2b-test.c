@@ -29,7 +29,7 @@ int main( int argc, char **argv )
   {
     uint8_t hash[BLAKE2B_OUTBYTES];
 
-    if( blake2b( hash, buf, key, BLAKE2B_OUTBYTES, i, BLAKE2B_KEYBYTES ) < 0 || 
+    if( blake2b( hash, BLAKE2B_OUTBYTES, buf, i, key, BLAKE2B_KEYBYTES ) < 0 ||
         0 != memcmp( hash, blake2b_keyed_kat[i], BLAKE2B_OUTBYTES ) )
     {
       puts( "error" );
