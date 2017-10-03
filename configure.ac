@@ -40,7 +40,7 @@ dnl LT_INIT
 
 AC_ARG_ENABLE(fat,
 AC_HELP_STRING([--enable-fat],
-               [build a fat binary on systems that support it [[default=no]]]),
+               [build a fat binary on systems that support it [default=no]]),
                [case $enableval in
                   yes|no) ;;
                   *) AC_MSG_ERROR([bad value $enableval for --enable-fat, need yes or no]) ;;
@@ -48,7 +48,19 @@ AC_HELP_STRING([--enable-fat],
                [enable_fat=no]
 )
 
+AC_ARG_ENABLE(native,
+AC_HELP_STRING([--enable-native],
+               [build a binary optimized for the CPU found at compile time on systems that support it [default=yes]]),
+               [case $enableval in
+                  yes|no) ;;
+                  *) AC_MSG_ERROR([bad value $enableval for --enable-native, need yes or no]) ;;
+                esac],
+               [enable_native=yes]
+)
+
 AX_CHECK_COMPILE_FLAG([-O3], [CFLAGS=-O3])
+dnl Not all architectures support -march=native
+AX_CHECK_COMPILE_FLAG([-march=native], [], [enable_native=no])
 
 if test $enable_fat == "yes"; then
   dnl Fat build needs compiler who knows all the possible instruction sets
@@ -57,7 +69,7 @@ if test $enable_fat == "yes"; then
   AX_CHECK_COMPILE_FLAG([-msse4.1], [], AC_MSG_ERROR([Compiler does not know -msse4.1.]))
   AX_CHECK_COMPILE_FLAG([-mavx],    [], AC_MSG_ERROR([Compiler does not know -mavx.]))
   AX_CHECK_COMPILE_FLAG([-mxop],    [], AC_MSG_ERROR([Compiler does not know -mxop.]))
-else
+elif test $enable_native == "yes"; then
   AX_EXT
   CFLAGS="${CFLAGS} -march=native ${SIMD_FLAGS}"
 fi

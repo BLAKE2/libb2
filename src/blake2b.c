@@ -235,7 +235,7 @@ int blake2b_init( blake2b_state *S, size_t outlen )
 
   const blake2b_param P =
   {
-    outlen,
+    ( uint8_t ) outlen,
     0,
     1,
     1,
@@ -258,8 +258,8 @@ int blake2b_init_key( blake2b_state *S, size_t outlen, const void *key, size_t k
 
   const blake2b_param P =
   {
-    outlen,
-    keylen,
+    ( uint8_t ) outlen,
+    ( uint8_t ) keylen,
     1,
     1,
     0,
@@ -359,8 +359,8 @@ int blake2b_update( blake2b_state *S, const uint8_t *in, size_t inlen )
 {
   while( inlen > 0 )
   {
-    size_t left = S->buflen;
-    size_t fill = 2 * BLAKE2B_BLOCKBYTES - left;
+    uint32_t left = S->buflen;
+    uint32_t fill = 2 * BLAKE2B_BLOCKBYTES - left;
 
     if( inlen > fill )
     {
@@ -376,7 +376,7 @@ int blake2b_update( blake2b_state *S, const uint8_t *in, size_t inlen )
     else // inlen <= fill
     {
       memcpy( S->buf + left, in, inlen );
-      S->buflen += inlen; // Be lazy, do not compress
+      S->buflen += ( uint32_t ) inlen; // Be lazy, do not compress
       in += inlen;
       inlen -= inlen;
     }
