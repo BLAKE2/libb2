@@ -99,7 +99,7 @@ add_library(libb2 ${BLAKE2_SHARED_LIBRARY_DEF}
     blake2b-load-sse41.h
 
     blake2bp.c
-
+    blake2xb.c
 
     blake2s-ref.c
     blake2s-round.h
@@ -108,6 +108,7 @@ add_library(libb2 ${BLAKE2_SHARED_LIBRARY_DEF}
     blake2s-load-xop.h
 
     blake2sp.c
+    blake2xs.c
 
     ${BLAKE2_IMPL_SOURCES}
 )

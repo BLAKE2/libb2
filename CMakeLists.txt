@@ -36,7 +36,7 @@ include(TestBigEndian)
 TEST_BIG_ENDIAN(BLAKE2_BIG_ENDIAN)
 
 # SSE feature level
-set(BLAKE2_SSE_LEVELS NO_SSE SSE2 SSSE3 SSE4_1 AVX XOP)
+set(BLAKE2_SSE_LEVELS NO_SSE SSE2 SSSE3 SSE41 AVX XOP)
 
 option(BLAKE2_FAT_BINARIES "build fat binaries with all available SSE code paths." ON)
 if (BLAKE2_FAT_BINARIES)
