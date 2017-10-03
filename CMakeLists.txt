@@ -1,4 +1,4 @@
-# Written in 2015 by Henrik Steffen Gaﬂmann henrik@gassmann.onl
+# Written in 2015 by Henrik Steffen Ga√ümann henrik@gassmann.onl
 #
 # To the extent possible under law, the author(s) have dedicated all
 # copyright and related and neighboring rights to this software to the
@@ -13,7 +13,7 @@
 cmake_minimum_required(VERSION 3.0)
 cmake_policy(VERSION 3.0)
 cmake_policy(SET CMP0054 NEW)
-project(libb2 VERSION 0.97)
+project(libb2 VERSION 0.97 LANGUAGES C)
 
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 	message(FATAL_ERROR "in-source builds are not supported!")
@@ -36,27 +36,9 @@ include(TestBigEndian)
 TEST_BIG_ENDIAN(BLAKE2_BIG_ENDIAN)
 
 # SSE feature level
-include(CheckSSESupport)
-set(BLAKE2_SSE_LEVELS NO_SSE) #0
-if(SSE2_AVAILABLE)
-    list(APPEND BLAKE2_SSE_LEVELS SSE2) #1
-    if(SSSE3_AVAILABLE)
-        list(APPEND BLAKE2_SSE_LEVELS SSSE3) #2
-        if(SSE41_AVAILABLE)
-            list(APPEND BLAKE2_SSE_LEVELS SSE4_1) #3
-            if (AVX_AVAILABLE)
-                list(APPEND BLAKE2_SSE_LEVELS AVX) #4
-                if (XOP_AVAILABLE)
-                    list(APPEND BLAKE2_SSE_LEVELS XOP) #5
-                endif()
-            endif()
-        endif()
-    endif()
-endif()
+set(BLAKE2_SSE_LEVELS NO_SSE SSE2 SSSE3 SSE4_1 AVX XOP)
 
-if (XOP_AVAILABLE)
-    option(BLAKE2_FAT_BINARIES "build fat binaries with all available SSE code paths." ON)
-endif()
+option(BLAKE2_FAT_BINARIES "build fat binaries with all available SSE code paths." ON)
 if (BLAKE2_FAT_BINARIES)
     list(FIND BLAKE2_SSE_LEVELS XOP BLAKE2_EIS_IDX)
 else()
@@ -73,6 +55,10 @@ endif()
 
 option(BLAKE2_BUILD_TESTS "")
 option(BLAKE2_SHARED_OBJECT "build a dynamic link library instead of a static one")
+
+if (BLAKE2_BUILD_TESTS)
+    enable_testing()
+endif()
 
 ########################################################################
 # add project
