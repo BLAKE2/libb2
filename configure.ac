@@ -1,11 +1,11 @@
 AC_PREREQ([2.61])
-AC_INIT([libb2], [0.97], [contact@blake2.net], [libb2], [https://blake2.net])
+AC_INIT([libb2], [0.98], [contact@blake2.net], [libb2], [https://blake2.net])
 AC_CONFIG_SRCDIR([src/blake2b.c])
 AC_CONFIG_HEADERS([src/config.h])
 AM_INIT_AUTOMAKE([foreign 1.9])
 AC_CONFIG_MACRO_DIR([m4])
 
-B2_LIBRARY_VERSION=1:2:0 # interface, revision, age
+B2_LIBRARY_VERSION=1:3:0 # interface, revision, age
 AC_SUBST(B2_LIBRARY_VERSION)
 
 AC_LANG_C
