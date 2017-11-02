@@ -68,19 +68,22 @@ extern "C" {
   };
 
 #pragma pack(push, 1)
-  typedef struct __blake2s_param
+  typedef union __blake2s_param
   {
-    uint8_t  digest_length; // 1
-    uint8_t  key_length;    // 2
-    uint8_t  fanout;        // 3
-    uint8_t  depth;         // 4
-    uint32_t leaf_length;   // 8
-    uint8_t  node_offset[6];// 14
-    uint8_t  node_depth;    // 15
-    uint8_t  inner_length;  // 16
-    // uint8_t  reserved[0];
-    uint8_t  salt[BLAKE2S_SALTBYTES]; // 24
-    uint8_t  personal[BLAKE2S_PERSONALBYTES];  // 32
+    struct {
+      uint8_t  digest_length; // 1
+      uint8_t  key_length;    // 2
+      uint8_t  fanout;        // 3
+      uint8_t  depth;         // 4
+      uint32_t leaf_length;   // 8
+      uint8_t  node_offset[6];// 14
+      uint8_t  node_depth;    // 15
+      uint8_t  inner_length;  // 16
+      // uint8_t  reserved[0];
+      uint8_t  salt[BLAKE2S_SALTBYTES]; // 24
+      uint8_t  personal[BLAKE2S_PERSONALBYTES];  // 32
+    };
+    uint8_t bytes[BLAKE2S_OUTBYTES];
   } blake2s_param;
 
   typedef struct __blake2s_state
@@ -94,19 +97,22 @@ extern "C" {
     uint8_t  last_node;
   } blake2s_state;
 
-  typedef struct __blake2b_param
+  typedef union __blake2b_param
   {
-    uint8_t  digest_length; // 1
-    uint8_t  key_length;    // 2
-    uint8_t  fanout;        // 3
-    uint8_t  depth;         // 4
-    uint32_t leaf_length;   // 8
-    uint64_t node_offset;   // 16
-    uint8_t  node_depth;    // 17
-    uint8_t  inner_length;  // 18
-    uint8_t  reserved[14];  // 32
-    uint8_t  salt[BLAKE2B_SALTBYTES]; // 48
-    uint8_t  personal[BLAKE2B_PERSONALBYTES];  // 64
+    struct {
+      uint8_t  digest_length; // 1
+      uint8_t  key_length;    // 2
+      uint8_t  fanout;        // 3
+      uint8_t  depth;         // 4
+      uint32_t leaf_length;   // 8
+      uint64_t node_offset;   // 16
+      uint8_t  node_depth;    // 17
+      uint8_t  inner_length;  // 18
+      uint8_t  reserved[14];  // 32
+      uint8_t  salt[BLAKE2B_SALTBYTES]; // 48
+      uint8_t  personal[BLAKE2B_PERSONALBYTES];  // 64
+    };
+    uint8_t bytes[BLAKE2B_OUTBYTES];
   } blake2b_param;
 
   typedef struct __blake2b_state
@@ -138,6 +144,32 @@ extern "C" {
     uint8_t  outlen;
   } blake2bp_state;
 #pragma pack(pop)
+
+  // Parameter API
+
+  BLAKE2_API void blake2s_param_init(blake2s_param * P);
+  BLAKE2_API  int blake2s_param_set_digest_length(blake2s_param * P, size_t outlen);
+  BLAKE2_API  int blake2s_param_set_key_length(blake2s_param * P, size_t keylen);
+  BLAKE2_API  int blake2s_param_set_fanout(blake2s_param * P, size_t fanout);
+  BLAKE2_API  int blake2s_param_set_depth(blake2s_param * P, size_t depth);
+  BLAKE2_API  int blake2s_param_set_leaf_length(blake2s_param * P, uint32_t leaf_length);
+  BLAKE2_API  int blake2s_param_set_node_offset(blake2s_param * P, uint64_t node_offset);
+  BLAKE2_API  int blake2s_param_set_node_depth(blake2s_param * P, size_t node_depth);
+  BLAKE2_API  int blake2s_param_set_inner_length(blake2s_param * P, size_t inner_length);
+  BLAKE2_API  int blake2s_param_set_salt(blake2s_param * P, const uint8_t salt[BLAKE2S_SALTBYTES]);
+  BLAKE2_API  int blake2s_param_set_personal(blake2s_param * P, const uint8_t personal[BLAKE2S_PERSONALBYTES]);
+
+  BLAKE2_API void blake2b_param_init(blake2b_param * P);
+  BLAKE2_API  int blake2b_param_set_digest_length(blake2b_param * P, size_t outlen);
+  BLAKE2_API  int blake2b_param_set_key_length(blake2b_param * P, size_t keylen);
+  BLAKE2_API  int blake2b_param_set_fanout(blake2b_param * P, size_t fanout);
+  BLAKE2_API  int blake2b_param_set_depth(blake2b_param * P, size_t depth);
+  BLAKE2_API  int blake2b_param_set_leaf_length(blake2b_param * P, uint32_t leaf_length);
+  BLAKE2_API  int blake2b_param_set_node_offset(blake2b_param * P, uint64_t node_offset);
+  BLAKE2_API  int blake2b_param_set_node_depth(blake2b_param * P, size_t node_depth);
+  BLAKE2_API  int blake2b_param_set_inner_length(blake2b_param * P, size_t inner_length);
+  BLAKE2_API  int blake2b_param_set_salt(blake2b_param * P, const uint8_t salt[BLAKE2S_SALTBYTES]);
+  BLAKE2_API  int blake2b_param_set_personal(blake2b_param * P, const uint8_t personal[BLAKE2S_PERSONALBYTES]);
 
   // Streaming API
   BLAKE2_API int blake2s_init( blake2s_state *S, size_t outlen );

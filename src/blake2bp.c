@@ -28,17 +28,17 @@
 static int blake2bp_init_leaf( blake2b_state *S, uint8_t outlen, uint8_t keylen, uint64_t offset )
 {
   blake2b_param P[1];
-  P->digest_length = outlen;
-  P->key_length = keylen;
-  P->fanout = PARALLELISM_DEGREE;
-  P->depth = 2;
-  store32(&P->leaf_length, 0);
-  store64(&P->node_offset, offset);
-  P->node_depth = 0;
-  P->inner_length = BLAKE2B_OUTBYTES;
-  memset( P->reserved, 0, sizeof( P->reserved ) );
-  memset( P->salt, 0, sizeof( P->salt ) );
-  memset( P->personal, 0, sizeof( P->personal ) );
+
+  blake2b_param_init(P);
+  blake2b_param_set_digest_length(P, outlen);
+  blake2b_param_set_key_length(P, keylen);
+  blake2b_param_set_fanout(P, PARALLELISM_DEGREE);
+  blake2b_param_set_depth(P, 2);
+  blake2b_param_set_leaf_length(P, 0);
+  blake2b_param_set_node_offset(P, offset);
+  blake2b_param_set_node_depth(P, 0);
+  blake2b_param_set_inner_length(P, BLAKE2B_OUTBYTES);
+
   blake2b_init_param( S, P );
   S->outlen = P->inner_length;
   return 0;
@@ -47,17 +47,17 @@ static int blake2bp_init_leaf( blake2b_state *S, uint8_t outlen, uint8_t keylen,
 static int blake2bp_init_root( blake2b_state *S, uint8_t outlen, uint8_t keylen )
 {
   blake2b_param P[1];
-  P->digest_length = outlen;
-  P->key_length = keylen;
-  P->fanout = PARALLELISM_DEGREE;
-  P->depth = 2;
-  store32(&P->leaf_length, 0);
-  store64(&P->node_offset, 0);
-  P->node_depth = 1;
-  P->inner_length = BLAKE2B_OUTBYTES;
-  memset( P->reserved, 0, sizeof( P->reserved ) );
-  memset( P->salt, 0, sizeof( P->salt ) );
-  memset( P->personal, 0, sizeof( P->personal ) );
+
+  blake2b_param_init(P);
+  blake2b_param_set_digest_length(P, outlen);
+  blake2b_param_set_key_length(P, keylen);
+  blake2b_param_set_fanout(P, PARALLELISM_DEGREE);
+  blake2b_param_set_depth(P, 2);
+  blake2b_param_set_leaf_length(P, 0);
+  blake2b_param_set_node_offset(P, 0);
+  blake2b_param_set_node_depth(P, 1);
+  blake2b_param_set_inner_length(P, BLAKE2B_OUTBYTES);
+
   blake2b_init_param( S, P );
   S->outlen = P->digest_length;
   return 0;

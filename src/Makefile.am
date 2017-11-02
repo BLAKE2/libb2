@@ -37,7 +37,7 @@ noinst_LTLIBRARIES = libblake2b_ref.la \
                      libblake2s_avx.la  \
                      libblake2s_xop.la 
 
-libb2_la_SOURCES = blake2-dispatch.c blake2sp.c blake2bp.c
+libb2_la_SOURCES = blake2-dispatch.c blake2sp.c blake2bp.c blake2s-param.c blake2b-param.c
 libb2_la_LIBADD += libblake2b_ref.la \
                   libblake2b_sse2.la \
 				          libblake2b_ssse3.la \
@@ -106,6 +106,8 @@ else
 if USE_SSE
 libb2_la_SOURCES = blake2sp.c \
                    blake2bp.c \
+                   blake2s-param.c \
+                   blake2b-param.c \
                    blake2s.c \
                    blake2b.c \
                    blake2-impl.h \
@@ -120,6 +122,8 @@ libb2_la_SOURCES = blake2sp.c \
 else
 libb2_la_SOURCES = blake2s-ref.c \
                    blake2b-ref.c \
+                   blake2s-param.c \
+                   blake2b-param.c \
                    blake2.h \
                    blake2-impl.h \
                    blake2sp.c \
