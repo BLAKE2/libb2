@@ -175,8 +175,8 @@ extern "C" {
   BLAKE2_API  int blake2b_param_set_node_offset(blake2b_param * P, uint64_t node_offset);
   BLAKE2_API  int blake2b_param_set_node_depth(blake2b_param * P, size_t node_depth);
   BLAKE2_API  int blake2b_param_set_inner_length(blake2b_param * P, size_t inner_length);
-  BLAKE2_API  int blake2b_param_set_salt(blake2b_param * P, const uint8_t salt[BLAKE2S_SALTBYTES]);
-  BLAKE2_API  int blake2b_param_set_personal(blake2b_param * P, const uint8_t personal[BLAKE2S_PERSONALBYTES]);
+  BLAKE2_API  int blake2b_param_set_salt(blake2b_param * P, const uint8_t salt[BLAKE2B_SALTBYTES]);
+  BLAKE2_API  int blake2b_param_set_personal(blake2b_param * P, const uint8_t personal[BLAKE2B_PERSONALBYTES]);
 
   // Streaming API
   BLAKE2_API int blake2s_init( blake2s_state *S, size_t outlen );
