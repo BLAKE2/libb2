@@ -68,6 +68,13 @@ extern "C" {
   };
 
 #pragma pack(push, 1)
+  /*
+   * These struct fields are deprecated, and kept around only for backwards
+   * compatibility. All new code should use the blake2x_param_set_xxx helper functions
+   * instead. In particular, setting the leaf_length or node_offset fields here
+   * gives incorrect results on big endian platforms, if the caller doesn't
+   * explicitly swap endianness first, cf. https://github.com/BLAKE2/libb2/issues/12.
+   */
   typedef union __blake2s_param
   {
     struct {
@@ -86,17 +93,6 @@ extern "C" {
     uint8_t bytes[BLAKE2S_OUTBYTES];
   } blake2s_param;
 
-  typedef struct __blake2s_state
-  {
-    uint32_t h[8];
-    uint32_t t[2];
-    uint32_t f[2];
-    uint8_t  buf[2 * BLAKE2S_BLOCKBYTES];
-    uint32_t buflen;
-    uint8_t  outlen;
-    uint8_t  last_node;
-  } blake2s_state;
-
   typedef union __blake2b_param
   {
     struct {
@@ -114,6 +110,17 @@ extern "C" {
     };
     uint8_t bytes[BLAKE2B_OUTBYTES];
   } blake2b_param;
+
+  typedef struct __blake2s_state
+  {
+    uint32_t h[8];
+    uint32_t t[2];
+    uint32_t f[2];
+    uint8_t  buf[2 * BLAKE2S_BLOCKBYTES];
+    uint32_t buflen;
+    uint8_t  outlen;
+    uint8_t  last_node;
+  } blake2s_state;
 
   typedef struct __blake2b_state
   {
