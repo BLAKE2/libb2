@@ -63,6 +63,18 @@ static inline void cpuid( uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t 
     : "=a"( *eax ), "=b"( *ebx ), "=c"( *ecx ), "=d"( *edx ) : "a"( *eax ) );
 #endif
 }
+
+static inline uint64_t xgetbv(uint32_t xcr)
+{
+  uint32_t a, d;
+  __asm__ __volatile__(
+    "xgetbv"
+    :  "=a"(a),"=d"(d)
+    : "c"(xcr)
+  );
+  return ((uint64_t)d << 32) | a;
+}
+
 #elif defined(_MSC_VER)
 #include <intrin.h>
 static inline void cpuid( uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx )
@@ -106,8 +118,13 @@ static inline cpu_feature_t get_cpu_features( void )
   if( IsProcessorFeaturePresent(17) ) /* Some environments don't know about PF_XSAVE_ENABLED */
 #endif
   {
-    if( 1 & ( ecx >> 28 ) )
+    /* check for AVX and OSXSAVE bits */
+    if( 1 & ( ecx >> 28 ) & (ecx >> 27) ) {
+#if !defined(WIN32) /* Already checked for this in WIN32 */
+    if( (xgetbv(0) & 6) == 6 ) /* XCR0 */
+#endif
       feature = AVX;
+    }
 
 
     eax = 0x80000001;
