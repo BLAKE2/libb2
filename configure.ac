@@ -12,6 +12,9 @@ AC_LANG_C
 AC_PROG_CC
 AC_PROG_CC_C99
 
+AC_CHECK_FUNCS(explicit_bzero)
+AC_CHECK_FUNCS(explicit_memset)
+AC_CHECK_FUNCS(memset_s)
 AC_CHECK_HEADERS([stddef.h stdint.h stdlib.h string.h])
 AC_OPENMP
 AX_CHECK_ALIGNED_ACCESS_REQUIRED
