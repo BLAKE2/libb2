@@ -129,6 +129,10 @@ target_compile_definitions(libb2
     PUBLIC
         $<${BLAKE2_SHARED_LIBRARY_VAL}:BLAKE2_DLL>
 )
+target_include_directories(libb2
+    PUBLIC
+        $<INSTALL_INTERFACE:include>
+)
 set_target_properties(libb2 PROPERTIES PREFIX "")
 
 if(BLAKE2_UTILIZE_OPENMP)
