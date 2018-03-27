@@ -1,4 +1,4 @@
-# libb2
+# libb2 v0.98
 
 C library providing BLAKE2b, BLAKE2s, BLAKE2bp, BLAKE2sp
 
