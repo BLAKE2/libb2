@@ -63,7 +63,9 @@ AC_HELP_STRING([--enable-native],
 
 AX_CHECK_COMPILE_FLAG([-O3], [CFLAGS=-O3])
 dnl Not all architectures support -march=native
-AX_CHECK_COMPILE_FLAG([-march=native], [], [enable_native=no])
+if test $enable_native == "yes"; then
+  AX_CHECK_COMPILE_FLAG([-march=native], [], [enable_native=no])
+fi
 
 if test $enable_fat == "yes"; then
   dnl Fat build needs compiler who knows all the possible instruction sets
