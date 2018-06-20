@@ -27,25 +27,27 @@
 #define BLAKE2_IMPL_EVAL(x,y)  BLAKE2_IMPL_CAT(x,y)
 #define BLAKE2_IMPL_NAME(fun)  BLAKE2_IMPL_EVAL(fun, SUFFIX)
 
+static inline _Bool host_little_endian() {
+  union {
+    uint64_t i;
+    unsigned char p[sizeof( uint64_t )];
+  } u;
+  u.i = 1;
+  return !!u.p[0];
+}
+
 static inline uint32_t load32( const void *src )
 {
-#if defined(NATIVE_LITTLE_ENDIAN) && !defined(HAVE_ALIGNED_ACCESS_REQUIRED)
-  return *( uint32_t * )( src );
-#else
   const uint8_t *p = ( uint8_t * )src;
   uint32_t w = *p++;
   w |= ( uint32_t )( *p++ ) <<  8;
   w |= ( uint32_t )( *p++ ) << 16;
   w |= ( uint32_t )( *p++ ) << 24;
   return w;
-#endif
 }
 
 static inline uint64_t load64( const void *src )
 {
-#if defined(NATIVE_LITTLE_ENDIAN) && !defined(HAVE_ALIGNED_ACCESS_REQUIRED)
-  return *( uint64_t * )( src );
-#else
   const uint8_t *p = ( uint8_t * )src;
   uint64_t w = *p++;
   w |= ( uint64_t )( *p++ ) <<  8;
@@ -56,37 +58,46 @@ static inline uint64_t load64( const void *src )
   w |= ( uint64_t )( *p++ ) << 48;
   w |= ( uint64_t )( *p++ ) << 56;
   return w;
-#endif
 }
 
 static inline void store32( void *dst, uint32_t w )
 {
-#if defined(NATIVE_LITTLE_ENDIAN) && !defined(HAVE_ALIGNED_ACCESS_REQUIRED)
-  *( uint32_t * )( dst ) = w;
-#else
-  uint8_t *p = ( uint8_t * )dst;
-  *p++ = ( uint8_t )w; w >>= 8;
-  *p++ = ( uint8_t )w; w >>= 8;
-  *p++ = ( uint8_t )w; w >>= 8;
-  *p++ = ( uint8_t )w;
-#endif
+  if ( host_little_endian() ) {
+      union {
+        uint32_t i;
+        unsigned char p[sizeof( uint32_t )];
+      } u;
+      u.i = w;
+      memcpy( dst, u.p, sizeof( u.p ) );
+  } else {
+    uint8_t *p = ( uint8_t * )dst;
+    *p++ = ( uint8_t )w; w >>= 8;
+    *p++ = ( uint8_t )w; w >>= 8;
+    *p++ = ( uint8_t )w; w >>= 8;
+    *p++ = ( uint8_t )w;
+  }
 }
 
 static inline void store64( void *dst, uint64_t w )
 {
-#if defined(NATIVE_LITTLE_ENDIAN) && !defined(HAVE_ALIGNED_ACCESS_REQUIRED)
-  *( uint64_t * )( dst ) = w;
-#else
-  uint8_t *p = ( uint8_t * )dst;
-  *p++ = ( uint8_t )w; w >>= 8;
-  *p++ = ( uint8_t )w; w >>= 8;
-  *p++ = ( uint8_t )w; w >>= 8;
-  *p++ = ( uint8_t )w; w >>= 8;
-  *p++ = ( uint8_t )w; w >>= 8;
-  *p++ = ( uint8_t )w; w >>= 8;
-  *p++ = ( uint8_t )w; w >>= 8;
-  *p++ = ( uint8_t )w;
-#endif
+  if ( host_little_endian() ) {
+    union {
+        uint64_t i;
+        unsigned char p[sizeof( uint64_t )];
+    } u;
+    u.i = w;
+    memcpy( dst, u.p, sizeof( u.p ) );
+  } else {
+    uint8_t *p = ( uint8_t * )dst;
+    *p++ = ( uint8_t )w; w >>= 8;
+    *p++ = ( uint8_t )w; w >>= 8;
+    *p++ = ( uint8_t )w; w >>= 8;
+    *p++ = ( uint8_t )w; w >>= 8;
+    *p++ = ( uint8_t )w; w >>= 8;
+    *p++ = ( uint8_t )w; w >>= 8;
+    *p++ = ( uint8_t )w; w >>= 8;
+    *p++ = ( uint8_t )w;
+  }
 }
 
 static inline uint64_t load48( const void *src )
