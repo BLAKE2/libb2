@@ -17,7 +17,6 @@ AC_CHECK_FUNCS(explicit_memset)
 AC_CHECK_FUNCS(memset_s)
 AC_CHECK_HEADERS([stddef.h stdint.h stdlib.h string.h])
 AC_OPENMP
-AX_CHECK_ALIGNED_ACCESS_REQUIRED
 # AX_FORCEINLINE()
 AC_C_BIGENDIAN(
 	[],
