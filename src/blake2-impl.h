@@ -29,8 +29,10 @@
 
 static inline uint32_t load32( const void *src )
 {
-#if defined(NATIVE_LITTLE_ENDIAN) && !defined(HAVE_ALIGNED_ACCESS_REQUIRED)
-  return *( uint32_t * )( src );
+#if defined(NATIVE_LITTLE_ENDIAN)
+  uint32_t w;
+  memcpy( &w, src, sizeof( w ) );
+  return w;
 #else
   const uint8_t *p = ( uint8_t * )src;
   uint32_t w = *p++;
@@ -43,8 +45,10 @@ static inline uint32_t load32( const void *src )
 
 static inline uint64_t load64( const void *src )
 {
-#if defined(NATIVE_LITTLE_ENDIAN) && !defined(HAVE_ALIGNED_ACCESS_REQUIRED)
-  return *( uint64_t * )( src );
+#if defined(NATIVE_LITTLE_ENDIAN)
+  uint64_t w;
+  memcpy( &w, src, sizeof( w ) );
+  return w;
 #else
   const uint8_t *p = ( uint8_t * )src;
   uint64_t w = *p++;
@@ -61,8 +65,8 @@ static inline uint64_t load64( const void *src )
 
 static inline void store32( void *dst, uint32_t w )
 {
-#if defined(NATIVE_LITTLE_ENDIAN) && !defined(HAVE_ALIGNED_ACCESS_REQUIRED)
-  *( uint32_t * )( dst ) = w;
+#if defined(NATIVE_LITTLE_ENDIAN)
+  memcpy( dst, &w, sizeof( w ) );
 #else
   uint8_t *p = ( uint8_t * )dst;
   *p++ = ( uint8_t )w; w >>= 8;
@@ -74,8 +78,8 @@ static inline void store32( void *dst, uint32_t w )
 
 static inline void store64( void *dst, uint64_t w )
 {
-#if defined(NATIVE_LITTLE_ENDIAN) && !defined(HAVE_ALIGNED_ACCESS_REQUIRED)
-  *( uint64_t * )( dst ) = w;
+#if defined(NATIVE_LITTLE_ENDIAN)
+  memcpy( dst, &w, sizeof( w ) );
 #else
   uint8_t *p = ( uint8_t * )dst;
   *p++ = ( uint8_t )w; w >>= 8;
