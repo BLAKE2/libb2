@@ -86,7 +86,10 @@ AM_CONDITIONAL([USE_FAT], [test "$enable_fat" = "yes"])
 dnl Only move away from ref with SSSE3; SSE2 is generally slower
 AM_CONDITIONAL([USE_SSE], [test "$ax_cv_have_ssse3_ext" = "yes"])
 
+
+PKG_INSTALLDIR
 AC_CONFIG_FILES([Makefile
                  src/Makefile
+                 libb2.pc
                  ])
 AC_OUTPUT

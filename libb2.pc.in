@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libb2
+Description: C library providing BLAKE2b, BLAKE2s, BLAKE2bp, BLAKE2sp
+URL: https://github.com/BLAKE2/libb2
+Version: @VERSION@
+Requires: 
+Cflags: -I${includedir}
+Libs: -L${libdir} -lb2
