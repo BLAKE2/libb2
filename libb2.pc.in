@@ -3,7 +3,7 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: Blake2
+Name: libb2
 Description: C library providing BLAKE2b, BLAKE2s, BLAKE2bp, BLAKE2sp
 URL: https://github.com/BLAKE2/libb2
 Version: @VERSION@
