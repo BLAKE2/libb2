@@ -60,7 +60,7 @@ AC_HELP_STRING([--enable-native],
                [enable_native=yes]
 )
 
-AX_CHECK_COMPILE_FLAG([-O3], [CFLAGS=-O3])
+AX_CHECK_COMPILE_FLAG([-O3], [CFLAGS="$CFLAGS -O3"])
 dnl Not all architectures support -march=native
 if test $enable_native == "yes"; then
   AX_CHECK_COMPILE_FLAG([-march=native], [], [enable_native=no])
