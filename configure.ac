@@ -62,18 +62,18 @@ AC_HELP_STRING([--enable-native],
 
 AX_CHECK_COMPILE_FLAG([-O3], [CFLAGS=-O3])
 dnl Not all architectures support -march=native
-if test $enable_native == "yes"; then
+if test $enable_native = "yes"; then
   AX_CHECK_COMPILE_FLAG([-march=native], [], [enable_native=no])
 fi
 
-if test $enable_fat == "yes"; then
+if test $enable_fat = "yes"; then
   dnl Fat build needs compiler who knows all the possible instruction sets
   AX_CHECK_COMPILE_FLAG([-msse2],   [], AC_MSG_ERROR([Compiler does not know -msse2.]))
   AX_CHECK_COMPILE_FLAG([-mssse3],  [], AC_MSG_ERROR([Compiler does not know -mssse3.]))
   AX_CHECK_COMPILE_FLAG([-msse4.1], [], AC_MSG_ERROR([Compiler does not know -msse4.1.]))
   AX_CHECK_COMPILE_FLAG([-mavx],    [], AC_MSG_ERROR([Compiler does not know -mavx.]))
   AX_CHECK_COMPILE_FLAG([-mxop],    [], AC_MSG_ERROR([Compiler does not know -mxop.]))
-elif test $enable_native == "yes"; then
+elif test $enable_native = "yes"; then
   AX_EXT
   CFLAGS="${CFLAGS} -march=native ${SIMD_FLAGS}"
 fi
