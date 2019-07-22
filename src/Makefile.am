@@ -17,6 +17,7 @@ LDFLAGS += -version-info $(B2_LIBRARY_VERSION)
 
 lib_LTLIBRARIES = libb2.la
 libb2_la_LIBADD = # -lgomp -lpthread
+libb2_la_LDFLAGS = -no-undefined
 libb2_la_CPPFLAGS =  -DSUFFIX=  \
                      $(LTDLINCL) \
                      ${top_builddir}/src/
