@@ -1,3 +1,5 @@
+#!/bin/sh
+
 make maintainer-clean
 rm -rf Makefile.in\
        aclocal.m4\
