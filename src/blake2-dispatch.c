@@ -64,11 +64,13 @@ static inline void cpuid( uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t 
 #endif
 }
 
+/* xgetbv insn is GCC 4.5 and above. The byte codes sidestep the limitation */
+/* Also see http://www.agner.org/optimize/vectorclass/read.php?i=65 */
 static inline uint64_t xgetbv(uint32_t xcr)
 {
   uint32_t a, d;
   __asm__ __volatile__(
-    "xgetbv"
+    ".byte 0x0f, 0x01, 0xd0"
     :  "=a"(a),"=d"(d)
     : "c"(xcr)
   );
