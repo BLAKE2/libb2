@@ -99,7 +99,7 @@ static inline cpu_feature_t get_cpu_features( void )
 {
 #if defined(HAVE_X86)
   static volatile int initialized = 0;
-  static cpu_feature_t feature = NONE; // Safe default
+  static cpu_feature_t feature = NONE; /* safe default */
   uint32_t eax, ecx, edx, ebx;
 
   /* Ensure all threads see the previous write to initialized */
