@@ -102,6 +102,11 @@ static inline cpu_feature_t get_cpu_features( void )
   static cpu_feature_t feature = NONE; // Safe default
   uint32_t eax, ecx, edx, ebx;
 
+  /* Ensure all threads see the previous write to initialized */
+#if defined(__GNUC__)
+  __asm__ __volatile__ ("" ::: "memory");
+#endif
+
   if( initialized )
     return feature;
 
