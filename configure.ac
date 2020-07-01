@@ -82,6 +82,9 @@ case $host_os in
 	*mingw*) LDFLAGS="${LDFLAGS} -no-undefined" ;;
 esac
 
+dnl used by blake2-dispatch for initialization
+AX_GCC_FUNC_ATTRIBUTE([constructor])
+
 AM_CONDITIONAL([USE_FAT], [test "$enable_fat" = "yes"])
 dnl Only move away from ref with SSSE3; SSE2 is generally slower
 AM_CONDITIONAL([USE_SSE], [test "$ax_cv_have_ssse3_ext" = "yes"])

@@ -15,6 +15,7 @@
 #include <windows.h>
 #endif
 #include "blake2.h"
+#include "config.h"
 
 #if defined(__x86_64__) || defined(__i386__) || defined(_M_IX86) || defined(_M_X64)
 #define HAVE_X86
@@ -152,7 +153,14 @@ static inline cpu_feature_t get_cpu_features( void )
 #endif
 }
 
-
+#if defined(HAVE_FUNC_ATTRIBUTE_CONSTRUCTOR)
+__attribute__((constructor))
+void cpu_features_constructor( void )
+{
+    cpu_feature_t f = get_cpu_features();
+    (void)f;  /* unused */
+}
+#endif
 
 #if defined(__cplusplus)
 extern "C" {
