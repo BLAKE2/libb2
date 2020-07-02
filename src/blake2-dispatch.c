@@ -31,6 +31,11 @@ typedef enum
   XOP   = 5,
   /* AVX2  = 6, */
 #endif
+#if defined(__x86_64__) || defined(_M_X64)
+  DEFAULT = SSE2
+#else
+  DEFAULT = NONE
+#endif
 } cpu_feature_t;
 
 static const char feature_names[][8] =
@@ -98,7 +103,7 @@ static inline cpu_feature_t get_cpu_features( void )
 {
 #if defined(HAVE_X86)
   static volatile int initialized = 0;
-  static cpu_feature_t feature = NONE; // Safe default
+  static cpu_feature_t feature = DEFAULT;
   uint32_t eax, ecx, edx, ebx;
 
   if( initialized )
