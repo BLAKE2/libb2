@@ -1,0 +1,342 @@
+#   libb2 reference source code package - Travis testing configuration
+#
+#   Copyright 2020, Samuel Neves <sneves@dei.uc.pt>.  You may use this under the
+#   terms of the CC0, the OpenSSL Licence, or the Apache Public License 2.0, at
+#   your option.  The terms of these licenses can be found at:
+#
+#   - CC0 1.0 Universal : http://creativecommons.org/publicdomain/zero/1.0
+#   - OpenSSL license   : https://www.openssl.org/source/license.html
+#   - Apache 2.0        : http://www.apache.org/licenses/LICENSE-2.0
+#
+#   More information about the BLAKE2 hash function can be found at
+#   https://blake2.net.
+
+# DO NOT create top level (global) keys like env, arch, os, compiler.
+# The top level/global keys invoke [unwanted] matrix expansion. Also
+# see https://stackoverflow.com/q/58473000/608639 and
+# https://docs.travis-ci.com/user/reference/overview/ and
+# https://docs.travis-ci.com/user/multi-cpu-architectures and
+# https://github.com/travis-ci/travis-yml/blob/master/schema.json.
+
+language: c
+dist: bionic
+
+git:
+  depth: 5
+
+# Use jobs rather than matrix since we are precisely specifiying our
+# test cases. Do not move any of the keys (env, os, arch, compiler, etc)
+# into global. Putting them in global invokes the matrix expansion.
+jobs:
+  include:
+    # AMD64 testing
+    - name: GCC, amd64, no-opts
+      os: linux
+      arch: amd64
+      compiler: gcc
+      env:
+        - BUILD_OPTS=
+    - name: GCC, amd64, enable-fat
+      os: linux
+      arch: amd64
+      compiler: gcc
+      env:
+        - BUILD_OPTS="--enable-fat"
+    - name: GCC, amd64, disable-native
+      os: linux
+      arch: amd64
+      compiler: gcc
+      env:
+        - BUILD_OPTS="--disable-native"
+    - name: GCC, amd64, enable-openmp
+      os: linux
+      arch: amd64
+      compiler: gcc
+      env:
+        - BUILD_OPTS="--enable-openmp"
+    - name: GCC, amd64, disable-openmp
+      os: linux
+      arch: amd64
+      compiler: gcc
+      env:
+        - BUILD_OPTS="--disable-openmp"
+    - name: Clang, amd64, no-opts
+      os: linux
+      arch: amd64
+      compiler: clang
+      env:
+        - CC=clang-8
+        - BUILD_OPTS=
+    - name: Clang, amd64, enable-fat
+      os: linux
+      arch: amd64
+      compiler: clang
+      env:
+        - CC=clang-8
+        - BUILD_OPTS="--enable-fat"
+    - name: Clang, amd64, disable-native
+      os: linux
+      arch: amd64
+      compiler: clang
+      env:
+        - CC=clang-8
+        - BUILD_OPTS="--disable-native"
+    - name: Clang, amd64, enable-openmp
+      os: linux
+      arch: amd64
+      compiler: clang
+      env:
+        - CC=clang-8
+        - BUILD_OPTS="--enable-openmp"
+    - name: Clang, amd64, disable-openmp
+      os: linux
+      arch: amd64
+      compiler: clang
+      env:
+        - CC=clang-8
+        - BUILD_OPTS="--disable-openmp"
+    # OS X testing
+    - name: Clang, OS X, amd64, no-opts
+      os: osx
+      osx_image: xcode11.6
+      arch: amd64
+      compiler: clang
+      env:
+        - BUILD_OPTS=
+    - name: Clang, OS X, amd64, enable-fat
+      os: osx
+      osx_image: xcode11.6
+      arch: amd64
+      compiler: clang
+      env:
+        - BUILD_OPTS="--enable-fat"
+    - name: Clang, OS X, amd64, disable-native
+      os: osx
+      osx_image: xcode11.6
+      arch: amd64
+      compiler: clang
+      env:
+        - BUILD_OPTS="--disable-native"
+    - name: Clang, OS X, amd64, enable-openmp
+      os: osx
+      osx_image: xcode11.6
+      arch: amd64
+      compiler: clang
+      env:
+        - BUILD_OPTS="--enable-openmp"
+    - name: Clang, OS X, amd64, disable-openmp
+      os: osx
+      osx_image: xcode11.6
+      arch: amd64
+      compiler: clang
+      env:
+        - BUILD_OPTS="--disable-openmp"
+    # Aarch64 testing
+    - name: GCC, aarch64, no-opts
+      os: linux
+      arch: arm64
+      compiler: gcc
+      env:
+        - BUILD_OPTS=
+    - name: GCC, aarch64, disable-native
+      os: linux
+      arch: arm64
+      compiler: gcc
+      env:
+        - BUILD_OPTS="--disable-native"
+    - name: GCC, aarch64, enable-openmp
+      os: linux
+      arch: arm64
+      compiler: gcc
+      env:
+        - BUILD_OPTS="--enable-openmp"
+    - name: GCC, aarch64, disable-openmp
+      os: linux
+      arch: arm64
+      compiler: gcc
+      env:
+        - BUILD_OPTS="--disable-openmp"
+    - name: Clang, aarch64, no-opts
+      os: linux
+      arch: arm64
+      compiler: clang
+      env:
+        - CC=clang-8
+        - BUILD_OPTS=
+    - name: Clang, aarch64, disable-native
+      os: linux
+      arch: arm64
+      compiler: clang
+      env:
+        - CC=clang-8
+        - BUILD_OPTS="--disable-native"
+    - name: Clang, aarch64, enable-openmp
+      os: linux
+      arch: arm64
+      compiler: clang
+      env:
+        - CC=clang-8
+        - BUILD_OPTS="--enable-openmp"
+    - name: Clang, aarch64, disable-openmp
+      os: linux
+      arch: arm64
+      compiler: clang
+      env:
+        - CC=clang-8
+        - BUILD_OPTS="--disable-openmp"
+    # PowerPC testing
+    - name: GCC, ppc64le, no-opts
+      os: linux
+      arch: ppc64le
+      compiler: gcc
+      env:
+        - BUILD_OPTS=
+    - name: GCC, ppc64le, disable-native
+      os: linux
+      arch: ppc64le
+      compiler: gcc
+      env:
+        - BUILD_OPTS="--disable-native"
+    - name: GCC, ppc64le, enable-openmp
+      os: linux
+      arch: ppc64le
+      compiler: gcc
+      env:
+        - BUILD_OPTS="--enable-openmp"
+    - name: GCC, ppc64le, disable-openmp
+      os: linux
+      arch: ppc64le
+      compiler: gcc
+      env:
+        - BUILD_OPTS="--disable-openmp"
+    - name: Clang, ppc64le, no-opts
+      os: linux
+      arch: ppc64le
+      compiler: clang
+      env:
+        - CC=clang-8
+        - BUILD_OPTS=
+    - name: Clang, ppc64le, disable-native
+      os: linux
+      arch: ppc64le
+      compiler: clang
+      env:
+        - CC=clang-8
+        - BUILD_OPTS="--disable-native"
+    - name: Clang, ppc64le, enable-openmp
+      os: linux
+      arch: ppc64le
+      compiler: clang
+      env:
+        - CC=clang-8
+        - BUILD_OPTS="--enable-openmp"
+    - name: Clang, ppc64le, disable-openmp
+      os: linux
+      arch: ppc64le
+      compiler: clang
+      env:
+        - CC=clang-8
+        - BUILD_OPTS="--disable-openmp"
+    # s390x testing
+    - name: GCC, s390x, no-opts
+      os: linux
+      arch: s390x
+      compiler: gcc
+      env:
+        - BUILD_OPTS=
+    - name: GCC, s390x, disable-native
+      os: linux
+      arch: s390x
+      compiler: gcc
+      env:
+        - BUILD_OPTS="--disable-native"
+    - name: GCC, s390x, enable-openmp
+      os: linux
+      arch: s390x
+      compiler: gcc
+      env:
+        - BUILD_OPTS="--enable-openmp"
+    - name: GCC, s390x, disable-openmp
+      os: linux
+      arch: s390x
+      compiler: gcc
+      env:
+        - BUILD_OPTS="--disable-openmp"
+    - name: Clang, s390x, no-opts
+      os: linux
+      arch: s390x
+      compiler: clang
+      env:
+        - CC=clang-8
+        - BUILD_OPTS=
+    - name: Clang, s390x, disable-native
+      os: linux
+      arch: s390x
+      compiler: clang
+      env:
+        - CC=clang-8
+        - BUILD_OPTS="--disable-native"
+    - name: Clang, s390x, enable-openmp
+      os: linux
+      arch: s390x
+      compiler: clang
+      env:
+        - CC=clang-8
+        - BUILD_OPTS="--enable-openmp"
+    - name: Clang, s390x, disable-openmp
+      os: linux
+      arch: s390x
+      compiler: clang
+      env:
+        - CC=clang-8
+        - BUILD_OPTS="--disable-openmp"
+
+  allow_failures:
+    # Clang has a fair amount of trouble
+    # on platforms Apple does not support
+    - os: linux
+      arch: s390x
+      compiler: clang
+    # Clang 7.0 and below will likely have trouble on ppc64le
+    # due to https://bugs.llvm.org/show_bug.cgi?id=39704.
+    # Also see https://bugs.llvm.org/show_bug.cgi?id=46571.
+    - os: linux
+      arch: ppc64le
+      compiler: clang
+    # And https://bugs.llvm.org/show_bug.cgi?id=46572
+    - os: linux
+      arch: arm64
+      compiler: clang
+
+before_install:
+  - |
+    # Clang 7 compiler is completely broken on PPC64 and s390x
+    # Clang 8 is needed for OpenMP on Aarch64
+    if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_COMPILER" == "clang" ]]; then
+        # https://github.com/travis-ci/travis-ci/issues/9037
+        sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A145
+        sudo apt-get -qq -y install --no-install-recommends clang-8 || true
+        sudo apt-get -qq -y install --no-install-recommends libomp-8-dev || true
+        sudo apt-get -qq -y install --no-install-recommends libomp5-8 || true
+    fi
+
+# Add 'cat src/test-suite.log' as required.
+script:
+  - |
+    ./autogen.sh
+    ./configure ${BUILD_OPTS}
+    make CC="${CC}" -j 3
+    make CC="${CC}" check
+
+# Whitelist branches to avoid testing feature branches twice
+branches:
+  only:
+    - master
+    - /\/ci$/
+
+#notifications:
+#  email:
+#    recipients:
+#      - blake2-build@example.com
+#    on_success: always # default: change
+#    on_failure: always # default: always
