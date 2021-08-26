@@ -1,6 +1,8 @@
 project('libb2', 'c', version: '0.98.1',
-  meson_version: '>=0.38.0',
+  meson_version: '>=0.47.0',
   default_options: ['optimization=3'])
+
+openmp = dependency('openmp', required: get_option('openmp'))
 
 conf = configuration_data()
 cc = meson.get_compiler('c')
