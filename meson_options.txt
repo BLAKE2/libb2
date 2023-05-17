@@ -1,0 +1,3 @@
+option('fat', type: 'boolean', value: false, description: 'build a fat binary on systems which support it')
+option('native', type: 'boolean', value: true, description: 'build a native binary with all optimizations supported')
+option('openmp', type: 'feature', value: 'auto', description: 'build with OpenMP support')
